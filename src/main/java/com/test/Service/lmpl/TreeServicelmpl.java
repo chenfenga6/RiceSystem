@@ -1,15 +1,19 @@
 package com.test.Service.lmpl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.test.Dao.PlatformDao;
 import com.test.Dao.TreeDao;
+import com.test.Dao.UserDao;
 import com.test.Entity.*;
 import com.test.Service.TreeService;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TreeServicelmpl implements TreeService {
@@ -17,10 +21,12 @@ public class TreeServicelmpl implements TreeService {
     private PlatformDao platformDao;
     @Resource
     private TreeDao treeDao;
+    @Resource
+    private UserDao userDao;
 
 
     @Override
-    //获取某个平台的树结构
+    //获取某个平台的树结构(无权限)
     public Resdata getTree(String pid) {
         Platform platform = new Platform();
         platform = platformDao.findByPid(Integer.parseInt(pid));
@@ -29,20 +35,39 @@ public class TreeServicelmpl implements TreeService {
             return null;
         }
         String table = "platform"+platform.getPid();                //获取到相对应平台的数据库表名称
-        PlatformTree tree = new PlatformTree();
-        tree=treeDao.findById(table,1);                         //找到相对应平台的父亲节点
+        PlatformTree Rootree =treeDao.findById(table,1);        //找到相对应平台的父亲节点
 
-        List<PlatformTree> platformTreeList = new ArrayList<>();
-        platformTreeList=getNextSubSet(table,tree);                 //查找所有的子节点
-
-        Votetree result = new Votetree();
-        result = treeToVote(tree);
-        result.setChildren(getChildrenToVote(platformTreeList));    //将所有节点转换成VoteTree对象 格式
+        Votetree result = getWholeTree(table,Rootree);             //查找所有的子节点
 
         List<Votetree> list = new ArrayList<>();
         list.add(result);
 
         return new Resdata(platform.getPid(),platform.getPname(),list);
+    }
+
+    @Override
+    //获取某个平台的树结构(有权限)
+    public Resdata getTreeOrdinal(Integer uid,Integer pid){
+        String table ="platform"+pid;
+
+        User user = userDao.findById(uid);                                  //获取该 <用户信息>
+        if(user.getRoleId() == null || user.getRoleId() == 0 ){
+            System.out.println("该用户没有开辟权限");
+            return null;
+        }
+        Integer Role_id = user.getRoleId();                                 //获取该用户的 <权限id>
+        System.out.println("用户："+user.getUname()+"Role_id="+Role_id);
+        List<Permission> permissionList = treeDao.findPermissionByRidAndPid(Role_id,pid);  //获取该用户 <所有权限节点信息>
+        System.out.println("共有数据："+permissionList.size()+"条");
+        List<Integer> arry = new ArrayList<>();
+        for(Permission pn : permissionList){
+            arry.add(pn.getnId());                                              //将<所有权限节点id>存入 List
+        }
+        PlatformTree tree = treeDao.findById(table,1);                  //查找table表的 根节点
+
+        List<Votetree> list = new ArrayList<>();
+        list.add(getWholeTree(table,tree,arry));                            //根据arry遍历出权限内的完整树
+        return new Resdata(tree.getId(),tree.getCname(),list);
     }
 
     @Override
@@ -130,73 +155,56 @@ public class TreeServicelmpl implements TreeService {
     }
 
 
+
+
+
+
+
+
+
     /**********************************方法************************************/
-    //将 PlatformTree 对象List   转换成 Votetree 对象List
-    public List<Votetree> getChildrenToVote(List<PlatformTree> platformTreeList){
-        List<Votetree> votetreeList = new ArrayList<>();
-        for(PlatformTree tr : platformTreeList ){
-            Votetree votetree = new Votetree();
-            votetree = treeToVote(tr);
-            if(tr.getChildren() != null){
-                votetree.setChildren(getChildrenToVote(tr.getChildren()));
+    //遍历出整棵树（不加权限匹配）
+    private Votetree getWholeTree(String table, PlatformTree platformTree){
+        Votetree votetree = new Votetree(platformTree.getId(),platformTree.getCname(),true);
+        List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
+        if( list.size() > 0 ){
+            List<Votetree> childlist = new ArrayList<>();
+            for(PlatformTree pt : list){
+                    childlist.add(getWholeTree(table,pt));
             }
-            votetreeList.add(votetree);
+            votetree.setChildren(childlist);
         }
-        return votetreeList;
+        return votetree;
     }
 
-    //将对象 PlatformTree 转换成 Votetree 对象
-    public Votetree treeToVote(PlatformTree p){
-        Votetree result = new Votetree();
-        result.setId(p.getId());
-        result.setTitle(p.getCname());
-        result.setSpread(true);
-        result.setChildren(p.getChildren());
-        return result;
-    }
-
-    //遍历出整棵树
-    public List<PlatformTree> getNextSubSet(String table,PlatformTree platformTree){
-        List<PlatformTree> platformTreeList = new ArrayList<>();
-        platformTreeList = treeDao.findByPid(table,platformTree.getId());
-
-        for (PlatformTree ts : platformTreeList){
-            List<PlatformTree> list = getDeeptLevel(table,ts);
-            if(list.size() > 0){
-                for(int i = 0 ; i < list.size();i++){
-                    list.get(i).setChildren(getNextSubSet(table,list.get(i)));
+    //遍历整棵树（加权限匹配） table 表名， arry[]权限表
+    private Votetree getWholeTree(String table, PlatformTree platformTree, List arry){
+        Votetree votetree = new Votetree(platformTree.getId(),platformTree.getCname(),true);
+        List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
+        if( list.size() > 0 ){
+            List<Votetree> childlist = new ArrayList<>();
+            for(PlatformTree pt : list){
+                if(arry.contains(pt.getId())){           //判断用户是否拥有该权限
+                    childlist.add(getWholeTree(table,pt,arry));
                 }
             }
-            ts.setChildren(list);
+            votetree.setChildren(childlist);
         }
-        return platformTreeList;
+        return votetree;
     }
 
-    // 查找 该节点 的所有孩子节点
-    public List<PlatformTree> getDeeptLevel(String table,PlatformTree platformTree){
+    // 查找 该节点 的孩子节点
+    private List<PlatformTree> getDeeptLevel(String table, PlatformTree platformTree){
         List<PlatformTree> platformTreeList = new ArrayList<>();
         platformTreeList = treeDao.findByPid(table,platformTree.getId());
-        if(platformTreeList.size() > 0){
-            for(int i = 0 ; i < platformTreeList.size(); i ++){
-                getDeeptLevel(table,platformTreeList.get(i));
-            }
-        }
         return platformTreeList;
     }
 
     //确定表名 + 按照id查找当前信息
-    public PlatformTree getTabAndNode(String pid, String id){
+    private PlatformTree getTabAndNode(String pid, String id){
         String table = "platform"+pid;
         PlatformTree p = new PlatformTree();
         p = treeDao.findById(table,Integer.parseInt(id));
         return p;
     }
-
-    /**********************************权限管理方法************************************/
-    //向Permission（角色权限表）增加角色权限
-
-
-
-
-
 }

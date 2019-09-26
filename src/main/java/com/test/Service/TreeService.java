@@ -3,6 +3,7 @@ package com.test.Service;
 import com.test.Entity.Platform;
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
+import com.test.Entity.Votetree;
 
 import java.util.List;
 
@@ -19,6 +20,10 @@ public interface TreeService {
     String delTreeNode(String pid,String id);
     //通过id查找这个树节点 全部信息和父节点名称
     Resdata findTreeNodeById(String pid,String id);
+
+    /***************************权限测试**********************/
+    //某用户 获取权限内的 某平台 节点
+    Resdata getTreeOrdinal(Integer uid,Integer pid);
 
 
 }

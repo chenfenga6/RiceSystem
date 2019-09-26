@@ -1,5 +1,6 @@
 package com.test.Dao;
 
+import com.test.Entity.Permission;
 import com.test.Entity.Platform;
 import com.test.Entity.PlatformTree;
 import org.apache.ibatis.annotations.*;
@@ -41,6 +42,9 @@ public interface TreeDao {
     int changeTreeNodeCname(String table,String Newname,Integer id);
 
     /*===============================权限测试========================================================*/
-    @Insert("insert into premission(rid,pnodes,platId) values(#{arg0},#{arg1},#{arg2})")
-    int addPremission(Integer rid,Integer pondes,Integer platId);
+    @Insert("insert into permission(rId,nId,pId) values(#{arg0},#{arg1},#{arg2})")
+    int addPermission(Integer rid,Integer nid,Integer pid);
+
+    @Select("select * from permission where rId=#{arg0} and pId=#{arg1}")
+    List<Permission> findPermissionByRidAndPid(Integer rid,Integer pid);
 }

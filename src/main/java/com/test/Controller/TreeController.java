@@ -3,10 +3,12 @@ package com.test.Controller;
 import com.test.Entity.Platform;
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
+import com.test.Entity.Votetree;
 import com.test.Service.TreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
@@ -18,8 +20,6 @@ public class TreeController {
     protected TreeService treeService;
     /**
      * 获取  某个 平台的全部节点
-     * @param pid  平台id
-     * @return
      */
     @RequestMapping(value = "/getTree",method = RequestMethod.POST)
     public Resdata getTree(@RequestParam String pid){
@@ -28,7 +28,6 @@ public class TreeController {
     }
     /**
      * 获取所有平台的根节点
-     * @return
      */
     @RequestMapping(value = "/getAllPid",method = RequestMethod.POST)
     public List<Resdata> getAllPid(){
@@ -76,6 +75,16 @@ public class TreeController {
     public Resdata findTreeNodeById(@RequestParam String pid,@RequestParam String id){
         System.out.println("查找平台："+pid+"节点id为："+id+"的节点信息");
         return treeService.findTreeNodeById(pid,id);
+    }
+
+    /****************************************************************************/
+    /**
+     * 某用户 获取 某平台 权限内的节点
+     */
+    @RequestMapping(value = "/getTreeOrdinal",method = RequestMethod.POST)
+    public Resdata getTreeOrdinal(@RequestParam String uid,@RequestParam String pid){
+        System.out.println("用户:"+uid+"获取<权限内>的树结构");
+        return treeService.getTreeOrdinal(Integer.parseInt(uid),Integer.parseInt(pid));
     }
 
 }

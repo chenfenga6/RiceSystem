@@ -13,6 +13,7 @@ public class User {
     private String company;     //公司名称
     private String btime;       //上一次登录时间
     private String bip;         //上一次登陆ip
+    private Integer roleId;
 
     public User() {
     }
@@ -128,6 +129,14 @@ public class User {
 
     public void setUstate(String ustate) {
         this.ustate = ustate;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
     @Override

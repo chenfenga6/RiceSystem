@@ -12,6 +12,12 @@ public class Votetree {
     public Votetree() {
     }
 
+    public Votetree(Integer id, String title, boolean spread) {
+        this.id = id;
+        this.title = title;
+        this.spread = spread;
+    }
+
     public Votetree(Integer id, String title, boolean spread, List<Votetree> children) {
         this.id = id;
         this.title = title;
