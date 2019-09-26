@@ -2,10 +2,7 @@ package com.test.Service.lmpl;
 
 import com.test.Dao.PlatformDao;
 import com.test.Dao.TreeDao;
-import com.test.Entity.Platform;
-import com.test.Entity.PlatformTree;
-import com.test.Entity.Resdata;
-import com.test.Entity.Votetree;
+import com.test.Entity.*;
 import com.test.Service.TreeService;
 import org.springframework.stereotype.Service;
 
@@ -194,6 +191,10 @@ public class TreeServicelmpl implements TreeService {
         p = treeDao.findById(table,Integer.parseInt(id));
         return p;
     }
+
+    /**********************************权限管理方法************************************/
+    //向Permission（角色权限表）增加角色权限
+
 
 
 

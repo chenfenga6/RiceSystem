@@ -39,4 +39,8 @@ public interface TreeDao {
 
     @Update("update ${arg0} set cname=#{arg1} where id =#{arg2}")
     int changeTreeNodeCname(String table,String Newname,Integer id);
+
+    /*===============================权限测试========================================================*/
+    @Insert("insert into premission(rid,pnodes,platId) values(#{arg0},#{arg1},#{arg2})")
+    int addPremission(Integer rid,Integer pondes,Integer platId);
 }
