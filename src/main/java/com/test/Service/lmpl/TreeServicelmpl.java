@@ -59,6 +59,10 @@ public class TreeServicelmpl implements TreeService {
         System.out.println("用户："+user.getUname()+"Role_id="+Role_id);
         List<Permission> permissionList = treeDao.findPermissionByRidAndPid(Role_id,pid);  //获取该用户 <所有权限节点信息>
         System.out.println("共有数据："+permissionList.size()+"条");
+        if (permissionList.size() == 0) {
+            System.out.println("该用户没有该表的权限!");
+            return null;
+        }
         List<Integer> arry = new ArrayList<>();
         for(Permission pn : permissionList){
             arry.add(pn.getnId());                                              //将<所有权限节点id>存入 List
