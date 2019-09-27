@@ -161,14 +161,9 @@ public class TreeServicelmpl implements TreeService {
 
 
 
-
-
-
-
-
     /**********************************方法************************************/
     //遍历出整棵树（不加权限匹配）
-    private Votetree getWholeTree(String table, PlatformTree platformTree){
+    public Votetree getWholeTree(String table, PlatformTree platformTree){
         Votetree votetree = new Votetree(platformTree.getId(),platformTree.getCname(),true);
         List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
         if( list.size() > 0 ){
@@ -182,7 +177,7 @@ public class TreeServicelmpl implements TreeService {
     }
 
     //遍历整棵树（加权限匹配） table 表名， arry[]权限表
-    private Votetree getWholeTree(String table, PlatformTree platformTree, List arry){
+    public Votetree getWholeTree(String table, PlatformTree platformTree, List arry){
         Votetree votetree = new Votetree(platformTree.getId(),platformTree.getCname(),true);
         List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
         if( list.size() > 0 ){

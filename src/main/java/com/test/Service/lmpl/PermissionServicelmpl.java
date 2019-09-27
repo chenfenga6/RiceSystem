@@ -1,20 +1,32 @@
 package com.test.Service.lmpl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.test.Dao.PermissionDao;
-import com.test.Entity.Role;
-import com.test.Entity.Votetree;
+import com.test.Dao.TreeDao;
+import com.test.Entity.*;
 import com.test.Service.PermissionService;
 import com.test.Service.TreeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PermissionServicelmpl implements PermissionService {
     @Resource
     PermissionDao permissionDao;
+    @Resource
+    TreeDao treeDao;
+
+    @Override
+    //根据rid 查找 Role
+    public String findRoleByRid(Integer rid) {
+        Role role = permissionDao.findByRid(rid);
+        return JSON.toJSONString(role);
+    }
 
     @Override
     //增加角色
@@ -57,29 +69,118 @@ public class PermissionServicelmpl implements PermissionService {
 
     @Override
     //增加某角色的某平台权限
-    public String addPermission(Integer rid, Integer pid, List<Votetree> list) {
+    public String addPermission(Integer rid, Integer pid, List<Permissiontree> list) {
 //        System.out.println("rid="+rid+" pid="+pid);
 //        System.out.println("共有结点"+list.size()+"个");
-        traverseTree(list.get(0),rid,pid);
+        List<Permission> isHavePerm = permissionDao.findPermissionByRidAndPid(rid,pid);
+        if (isHavePerm.size() == 0){
+            traverseTree(list.get(0),rid,pid);
+        }
+        else {
+            List<Integer> before = new ArrayList<>();
+            List<Integer> now = new ArrayList<>();
+            for(Permission pn : isHavePerm){
+                before.add(pn.getnId());
+            }
+            for(Permissiontree pt : list){
+                now.add(pt.getId());
+            }
+            updataPerm(rid,pid,before,now);                 //修改 rid&pid 的 nid
+        }
         return "success";
     }
 
     @Override
     //查看 某角色 某平台 已分配的权限
-    public String findPermByRAndP(Integer rid, Integer pid) {
-        System.out.println("rid="+rid+" and pid="+pid+" 共有"+permissionDao.countPermByRandP(rid,pid)+"条");
-        return null;
+    public Resdata findPermByRAndP(Integer rid, Integer pid) {
+        int item =permissionDao.countPermByRandP(rid,pid);
+        System.out.println("rid="+rid+" and pid="+pid+" 共有"+item+"条");
+
+        String table ="platform"+pid;
+        PlatformTree rootree = treeDao.findById(table,1);
+
+        if (item == 0){
+            Permissiontree pt = getCheckTree(table,rootree);                 //不打勾
+            List<Permissiontree> last = new ArrayList<>();
+            last.add(pt);
+            return new Resdata(rootree.getId(),rootree.getCname(),last);
+//            return JSONArray.toJSONString(votetree);
+        }else {
+            List<Integer> arry = new ArrayList<>();
+            List<Permission> list = permissionDao.findPermissionByRidAndPid(rid,pid);
+            for(Permission pn : list){
+                arry.add(pn.getnId());
+            }
+
+            Permissiontree ptree = getCheckTree(table,rootree,arry);        //打勾
+
+            List<Permissiontree> last = new ArrayList<>();
+            last.add(ptree);
+            return new Resdata(rootree.getId(),rootree.getCname(),last);
+//            return JSON.toJSONString(ptree);
+        }
+
     }
 
     /*****************************************方法**********************************************/
-    //遍历 List <Votetree> 并存储权限结点
-    public void traverseTree(Votetree rootTree,Integer rid,Integer pid){
+    //遍历 List <Permissiontree> 并存储权限结点
+    private void traverseTree(Permissiontree rootTree,Integer rid,Integer pid){
         permissionDao.addPermission(rid,rootTree.getId(),pid);
-        List<Votetree> childlist = rootTree.getChildren();
+        List<Permissiontree> childlist = rootTree.getChildren();
         if(childlist.size() > 0 ){
             for(int i = 0 ; i < childlist.size() ; i++){
-                Votetree votetree = JSON.parseObject(JSON.toJSONString(childlist.get(i)),Votetree.class);
-                traverseTree(votetree,rid,pid);
+                Permissiontree permissiontree = JSON.parseObject(JSON.toJSONString(childlist.get(i)),Permissiontree.class);
+                traverseTree(permissiontree,rid,pid);
+            }
+        }
+    }
+
+    //遍历整棵树 不打勾
+    private Permissiontree getCheckTree(String table, PlatformTree platformTree){
+        Permissiontree ptree = new Permissiontree(platformTree.getId(),platformTree.getCname(),true,false);
+        List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
+        if( list.size() > 0 ){
+            List<Permissiontree> childlist = new ArrayList<>();
+            for(PlatformTree pt : list){
+                childlist.add(getCheckTree(table,pt));
+            }
+            ptree.setChildren(childlist);
+        }
+        return ptree;
+    }
+
+    //遍历整棵树 找出权限内的叶子结点 并打勾
+    private Permissiontree getCheckTree(String table, PlatformTree platformTree, List arry){
+        Permissiontree ptree = new Permissiontree(platformTree.getId(),platformTree.getCname(),true);
+        List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
+        if( list.size() > 0 ){
+            List<Permissiontree> childlist = new ArrayList<>();
+            for(PlatformTree pt : list){
+                childlist.add(getCheckTree(table,pt,arry));
+            }
+            ptree.setChildren(childlist);
+        }
+        else if (arry.contains(ptree.getId())){
+            ptree.setChecked(true);
+        }
+        return ptree;
+    }
+
+    //修改 角色（rid） 对于平台（pid） 的结点（nid）
+    private void updataPerm(Integer rid,Integer pid,List<Integer> before,List<Integer> now){
+        for (int i = 0 ; i < now.size() ; i++){             //增加权限
+            if( ! before.contains(now.get(i))){
+                System.out.println("权限add+1");
+                before.add(now.get(i));
+                permissionDao.addPermission(rid,now.get(i),pid);
+            }
+        }
+        for (int i = 0 ; i < before.size() ; i++){          //删除结点
+            if(! now.contains(before.get(i))){
+                System.out.println("权限sub-1");
+                before.remove(before.get(i));
+                permissionDao.deletePermByAll(rid,before.get(i),pid);
+                i--;
             }
         }
     }

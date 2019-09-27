@@ -20,6 +20,12 @@ public class Permissiontree {
         this.checked = checked;
     }
 
+    public Permissiontree(Integer id, String title, boolean spread) {
+        this.id = id;
+        this.title = title;
+        this.spread = spread;
+    }
+
     public Integer getId() {
         return id;
     }
