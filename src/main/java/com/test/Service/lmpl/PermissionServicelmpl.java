@@ -17,11 +17,12 @@ public class PermissionServicelmpl implements PermissionService {
     PermissionDao permissionDao;
 
     @Override
-    public String addRole(String rname) {
+    //增加角色
+    public String addRole(String rname,String notes) {
         if(permissionDao.findByRname(rname) != null){
             return "该角色已存在";
         }
-        int ret = permissionDao.addRole(rname,null);
+        int ret = permissionDao.addRole(rname,notes);
         if(ret == 1){
             return "success";
         }
@@ -29,6 +30,33 @@ public class PermissionServicelmpl implements PermissionService {
     }
 
     @Override
+    //显示当前所有角色
+    public List<Role> findAllRoles() {
+        return permissionDao.findAllRoles();
+    }
+
+    @Override
+    //修改角色信息
+    public String changeRole(Integer rid, String rname, String notes) {
+        int ret = permissionDao.changeRole(rid,rname,notes);
+        if(ret==1){
+            return "success";
+        }
+        return "faile";
+    }
+
+    @Override
+    //删除角色信息
+    public String deleteRole(Integer rid) {
+        int ret = permissionDao.deleteRole(rid);
+        if(ret == 1){
+            return "success";
+        }
+        return "faile";
+    }
+
+    @Override
+    //增加某角色的某平台权限
     public String addPermission(Integer rid, Integer pid, List<Votetree> list) {
 //        System.out.println("rid="+rid+" pid="+pid);
 //        System.out.println("共有结点"+list.size()+"个");
@@ -37,10 +65,11 @@ public class PermissionServicelmpl implements PermissionService {
     }
 
     @Override
-    public List<Role> findAllRoles() {
-        return permissionDao.findAllRoles();
+    //查看 某角色 某平台 已分配的权限
+    public String findPermByRAndP(Integer rid, Integer pid) {
+        System.out.println("rid="+rid+" and pid="+pid+" 共有"+permissionDao.countPermByRandP(rid,pid)+"条");
+        return null;
     }
-
 
     /*****************************************方法**********************************************/
     //遍历 List <Votetree> 并存储权限结点

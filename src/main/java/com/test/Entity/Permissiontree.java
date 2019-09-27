@@ -2,27 +2,22 @@ package com.test.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
-//用来给前端展示树的结构
-public class Votetree {
+
+public class Permissiontree {
     private Integer id;                             // 模块编号
     private String title;                           //模块标题
     private boolean spread;                         //是否展开
+    private boolean checked;                        //是否勾选(叶子结点为true)
     private List children = new ArrayList();        //子节点集合
 
-    public Votetree() {
+    public Permissiontree() {
     }
 
-    public Votetree(Integer id, String title, boolean spread) {
+    public Permissiontree(Integer id, String title, boolean spread, boolean checked) {
         this.id = id;
         this.title = title;
         this.spread = spread;
-    }
-
-    public Votetree(Integer id, String title, boolean spread, List<Votetree> children) {
-        this.id = id;
-        this.title = title;
-        this.spread = spread;
-        this.children = children;
+        this.checked = checked;
     }
 
     public Integer getId() {
@@ -49,21 +44,19 @@ public class Votetree {
         this.spread = spread;
     }
 
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
     public List getChildren() {
         return children;
     }
 
     public void setChildren(List children) {
         this.children = children;
-    }
-
-    @Override
-    public String toString() {
-        return "Votetree{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", spread=" + spread +
-                ", children=" + children +
-                '}';
     }
 }
