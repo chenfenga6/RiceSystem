@@ -27,7 +27,7 @@ public class PermissionController {
     //增加某角色的某平台权限
     @RequestMapping(value = "/addPermission",method = RequestMethod.POST)
     public String addPermission(@RequestParam Integer rid,@RequestParam Integer pid, @RequestBody List<Permissiontree> list){
-        System.out.println("增加角色"+rid+" 的平台"+pid+" 权限");
+        System.out.println("改动角色"+rid+" 的平台"+pid+" 权限");
         return permissionService.addPermission(rid,pid,list);
     }
 
@@ -59,7 +59,8 @@ public class PermissionController {
         return permissionService.findPermByRAndP(rid,pid);
     }
 
-    @RequestMapping(value = "/findRoleByRid",method = RequestMethod.POST)
+    //根据Rid查找角色信息
+    @RequestMapping(value = "/findRoleByRid",method  = RequestMethod.POST)
     public String findRoleByRid(@RequestParam Integer rid){
         System.out.println("查找角色信息:"+rid);
         return permissionService.findRoleByRid(rid);

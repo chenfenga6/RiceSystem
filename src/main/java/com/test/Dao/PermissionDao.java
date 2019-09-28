@@ -52,13 +52,13 @@ public interface PermissionDao {
     int addPermission(Integer rid,Integer nid,Integer pid);
 
     //删除结点（通过rid和pid）
-    @Delete("delete from role where rId=#{arg0} and pId=#{arg1}")
+    @Delete("delete from permission where rId=#{arg0} and pId=#{arg1}")
     int deletePermByRAndP(Integer rid,Integer pid);
 
     //删除结点（通过nid)
-    @Delete("delete from role where nId=#{arg0}")
+    @Delete("delete from permission where nId=#{arg0}")
     int deletePermByNid(Integer nid);
 
-    @Delete("delete from role where rId=#{arg0} and nId=#{arg1} and pId=#{arg2}")
+    @Delete("delete from permission where rId=#{arg0} and nId=#{arg1} and pId=#{arg2}")
     int deletePermByAll(Integer rid, Integer nid, Integer pid);
 }
