@@ -1,6 +1,5 @@
 package com.test.Entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Resdata {

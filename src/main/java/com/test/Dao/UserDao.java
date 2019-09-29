@@ -3,8 +3,11 @@ package com.test.Dao;
 import com.test.Entity.User;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface UserDao {
+
     @Select("select * from user_data where uid=#{uid}")     //通过id找用户
     User findById(Integer uid);
 
@@ -33,8 +36,16 @@ public interface UserDao {
     @Update("update user_data set btime=#{arg0},bip=#{arg1} where uid=#{arg2}")
     int uplogin(String btime,String bip,String uid);
 
-    //
+    //查找某角色下的用户
+    @Select("select * from user_data where roleId=#{arg0}")
+    List<User> findByrId(Integer rid);
+
+    //更改角色信息
+    @Update("update user_data set roleId=#{arg0} where uid=#{arg1}")
+    int updateRid(Integer rid,Integer uid);
+
 //    @Update("create table ${tablename} (id int(10) KEY NOT NULL AUTO_INCREMENT, " +
 //            "name varchar(10))ENGINE=InnoDB DEFAULT CHARSET=utf8")
 //    int creattable(@Param(value = "tablename") String tablename)throws DataAccessException;
+
 }

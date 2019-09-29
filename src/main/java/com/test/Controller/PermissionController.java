@@ -3,7 +3,6 @@ package com.test.Controller;
 import com.test.Entity.Permissiontree;
 import com.test.Entity.Resdata;
 import com.test.Entity.Role;
-import com.test.Entity.Votetree;
 import com.test.Service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

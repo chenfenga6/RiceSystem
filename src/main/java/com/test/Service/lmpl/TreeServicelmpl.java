@@ -1,29 +1,26 @@
 package com.test.Service.lmpl;
 
-import com.alibaba.fastjson.JSONArray;
+import com.test.Dao.PermissionDao;
 import com.test.Dao.PlatformDao;
 import com.test.Dao.TreeDao;
 import com.test.Dao.UserDao;
 import com.test.Entity.*;
 import com.test.Service.TreeService;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TreeServicelmpl implements TreeService {
     @Resource
-    private PlatformDao platformDao;
+    PlatformDao platformDao;
     @Resource
-    private TreeDao treeDao;
+    TreeDao treeDao;
     @Resource
-    private UserDao userDao;
-
+    UserDao userDao;
+    @Resource
+    PermissionDao permissionDao;
 
     @Override
     //获取某个平台的树结构(无权限)
@@ -121,26 +118,6 @@ public class TreeServicelmpl implements TreeService {
     }
 
     @Override
-    //删除 某平台的 某节点（包括它的子节点）
-    public String delTreeNode(String pid, String id) {
-        String table = "platform"+pid;
-        PlatformTree platformTree = new PlatformTree();
-        platformTree = treeDao.findById(table,Integer.parseInt(id));
-        if(platformTree.getPid() == 0){
-            return "该节点为根节点不可删除！";
-        }
-        List<PlatformTree> plist = new ArrayList<>();
-        plist = getDeeptLevel(table,platformTree);
-        for(PlatformTree pt : plist){
-            treeDao.delTreeNode(table,pt.getId());
-        }
-         if(treeDao.delTreeNode(table,Integer.parseInt(id)) == 1){
-             return "success";
-         }
-        return "faile";
-    }
-
-    @Override
     //通过id查找这个树节点 全部信息和父节点名称
     public Resdata findTreeNodeById(String pid,String id) {
         PlatformTree node = new PlatformTree();
@@ -158,10 +135,58 @@ public class TreeServicelmpl implements TreeService {
         return res;
     }
 
+    //删除 某平台的 某节点（包括它的子节点）
+    @Override
+    public String deleteNode(String pid, String nid) {
+        String platname = "platform" + pid;
+        PlatformTree platformTree = treeDao.findById(platname,Integer.parseInt(nid));
+        if(platformTree.getPid() == 0){
+            return "该节点为根节点不可删除！";
+        }
+        System.out.println("name: " + platname +"  , id" + nid);
+        List<PlatformTree> platforms = treeDao.findByPid(platname,platformTree.getId());
 
+        for(PlatformTree s:platforms)
+            System.out.println("first" + s.getId());
+        deletetreenode(platname,platforms,pid);
+        List<Permission> permissions = permissionDao.findByPidAndNid(Integer.parseInt(pid),platformTree.getId());
+        if (permissions.size() != 0){
+            for(Permission p : permissions){
+                permissionDao.deletePermByAll(p.getrId(),p.getnId(),p.getpId());
+            }
+            System.out.println("asdfasdfsa");
+        }
+        treeDao.delTreeNode(platname,Integer.parseInt(nid));
+        return "success";
+    }
 
 
     /**********************************方法************************************/
+    //递归查找paltforms下所有子节点并删除
+    public void deletetreenode(String platname,List<PlatformTree> platforms,String pid){
+        System.out.println("outside");
+        for(PlatformTree p: platforms)
+            System.out.println("pal" + p.getId());
+        if(platforms.size() != 0)
+        {
+            System.out.println("into");
+            for(PlatformTree p:platforms){
+                List<PlatformTree> platformTrees = treeDao.findByPid(platname,p.getId());
+                deletetreenode(platname,platformTrees,pid);
+                System.out.println("pid = " + pid + " nid = " + p.getId());
+                List<Permission> permissions = permissionDao.findByPidAndNid(Integer.parseInt(pid),p.getId());
+                if (permissions.size() != 0){
+                    System.out.println(permissions.get(0).getnId());
+                    System.out.println("inside");
+                    for(Permission s : permissions){
+                        permissionDao.deletePermByAll(s.getrId(),s.getnId(),s.getpId());
+                    }
+                }
+                treeDao.delTreeNode(platname,p.getId());
+            }
+        }
+    }
+
     //遍历出整棵树（不加权限匹配）
     public Votetree getWholeTree(String table, PlatformTree platformTree){
         Votetree votetree = new Votetree(platformTree.getId(),platformTree.getCname(),true);

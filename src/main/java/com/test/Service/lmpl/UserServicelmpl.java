@@ -15,7 +15,7 @@ public class UserServicelmpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public String Login(String uid, String upwd) {
+    public String Login(String uid, String upwd,String ip) {
         System.out.println("uacc ="+uid+"   upwd="+upwd);
         if ( (uid == null || uid.equals("")) || (upwd == null || upwd.equals("")) ){
             return "账号或密码不可为空！";
@@ -23,21 +23,27 @@ public class UserServicelmpl implements UserService {
         User userinfor = new User();                 //存放该用户的数据库信息
         userinfor = userDao.findById(Integer.parseInt(uid));
 
+        String passwd = MD5.encode(upwd);
         if(userinfor == null){
             return "该用户不存在！请先注册！";
         }
-        if (!(upwd.equals( userinfor.getUpwd() )))
+        if (!(passwd.equals( userinfor.getUpwd() )))
         {
             return "账号或密码不正确！";
         }
+        Date date =new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
+        String date1 = sdf.format(date);
+        int res = userDao.uplogin(date1,ip,uid);
+        System.out.println("登陆成功");
         return "登陆成功！";
     }
-
     @Override
-    public String adduser(User user) {
+    public String adduser(User user)
+    {
         String passwd = MD5.encode(user.getUpwd());
         user.setUpwd(passwd);
-        Date date =new Date();
+        Date  date =new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
         String date1 = sdf.format(date);        //获取当前时间
         user.setStime(date1);
@@ -48,6 +54,7 @@ public class UserServicelmpl implements UserService {
         else{
             return "添加用户失败,请重新添加！";
         }
+
     }
 
     @Override
@@ -83,4 +90,16 @@ public class UserServicelmpl implements UserService {
             return user;
         }
     }
+
+//    @Override
+//    public String creat() {
+//        int res = userDao.creattable("table_data");
+//        if(res == 1){
+//            return "成功";
+//        }
+//        else {
+//            return "失败";
+//        }
+//
+//    }
 }
