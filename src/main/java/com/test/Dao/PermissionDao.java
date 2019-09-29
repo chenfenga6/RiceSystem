@@ -55,9 +55,9 @@ public interface PermissionDao {
     @Delete("delete from permission where rId=#{arg0} and pId=#{arg1}")
     int deletePermByRAndP(Integer rid,Integer pid);
 
-    //删除结点（通过nid)
-    @Delete("delete from permission where nId=#{arg0}")
-    int deletePermByNid(Integer nid);
+    //删除结点（通过id)
+    @Delete("delete from permission where id=#{arg0}")
+    int deletePermById(Integer id);
 
     @Delete("delete from permission where rId=#{arg0} and nId=#{arg1} and pId=#{arg2}")
     int deletePermByAll(Integer rid, Integer nid, Integer pid);

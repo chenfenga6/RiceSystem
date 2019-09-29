@@ -67,6 +67,15 @@ public class PermissionServicelmpl implements PermissionService {
     //增加某角色的某平台权限
     public String addPermission(Integer rid, Integer pid, List<Permissiontree> list) {
         List<Permission> isHavePerm = permissionDao.findPermissionByRidAndPid(rid,pid);
+        if(list.size() == 0){
+            System.out.println("传送的是空树!");
+            //还要加一个 如果Perm表中有权限  就得删除的方法
+            for(Permission pn: isHavePerm){
+                permissionDao.deletePermById(pn.getId());
+            }
+            return "空权限！";
+        }
+
         System.out.println("目前已有权限（"+isHavePerm.size()+"）个");
         if (isHavePerm.size() == 0){
             traverseTree(list.get(0),rid,pid);
@@ -88,17 +97,9 @@ public class PermissionServicelmpl implements PermissionService {
     @Override
     //查看 某角色 某平台 已分配的权限
     public Resdata findPermByRAndP(Integer rid, Integer pid) {
-//        int item =permissionDao.countPermByRandP(rid,pid);
-//        System.out.println("rid="+rid+" and pid="+pid+" 共有"+item+"条");
         String table ="platform"+pid;
         PlatformTree rootree = treeDao.findById(table,1);
-//        if (item == 0){
-//            Permissiontree pt = getCheckTree(table,rootree);                 //不打勾
-//            List<Permissiontree> last = new ArrayList<>();
-//            last.add(pt);
-//            return new Resdata(rootree.getId(),rootree.getCname(),last);
-////            return JSONArray.toJSONString(votetree);
-//        }else {
+
         List<Integer> arry = new ArrayList<>();
         List<Permission> list = permissionDao.findPermissionByRidAndPid(rid,pid);
         for(Permission pn : list){
@@ -110,8 +111,7 @@ public class PermissionServicelmpl implements PermissionService {
         List<Permissiontree> last = new ArrayList<>();
         last.add(ptree);
         return new Resdata(rootree.getId(),rootree.getCname(),last);
-//            return JSON.toJSONString(ptree);
-//        }
+//      return JSON.toJSONString(ptree);
     }
 
 
