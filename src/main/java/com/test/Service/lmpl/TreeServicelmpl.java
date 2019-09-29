@@ -143,18 +143,14 @@ public class TreeServicelmpl implements TreeService {
         if(platformTree.getPid() == 0){
             return "该节点为根节点不可删除！";
         }
-        System.out.println("name: " + platname +"  , id" + nid);
         List<PlatformTree> platforms = treeDao.findByPid(platname,platformTree.getId());
 
-        for(PlatformTree s:platforms)
-            System.out.println("first" + s.getId());
         deletetreenode(platname,platforms,pid);
         List<Permission> permissions = permissionDao.findByPidAndNid(Integer.parseInt(pid),platformTree.getId());
         if (permissions.size() != 0){
             for(Permission p : permissions){
                 permissionDao.deletePermByAll(p.getrId(),p.getnId(),p.getpId());
             }
-            System.out.println("asdfasdfsa");
         }
         treeDao.delTreeNode(platname,Integer.parseInt(nid));
         return "success";
@@ -164,19 +160,14 @@ public class TreeServicelmpl implements TreeService {
     /**********************************方法************************************/
     //递归查找paltforms下所有子节点并删除
     public void deletetreenode(String platname,List<PlatformTree> platforms,String pid){
-        System.out.println("outside");
-        for(PlatformTree p: platforms)
-            System.out.println("pal" + p.getId());
         if(platforms.size() != 0)
         {
-            System.out.println("into");
             for(PlatformTree p:platforms){
                 List<PlatformTree> platformTrees = treeDao.findByPid(platname,p.getId());
                 deletetreenode(platname,platformTrees,pid);
-                System.out.println("pid = " + pid + " nid = " + p.getId());
                 List<Permission> permissions = permissionDao.findByPidAndNid(Integer.parseInt(pid),p.getId());
                 if (permissions.size() != 0){
-                    System.out.println(permissions.get(0).getnId());
+//                    System.out.println(permissions.get(0).getnId());
                     System.out.println("inside");
                     for(Permission s : permissions){
                         permissionDao.deletePermByAll(s.getrId(),s.getnId(),s.getpId());
