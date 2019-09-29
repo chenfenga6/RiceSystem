@@ -3,6 +3,7 @@ package com.test.Service.lmpl;
 import com.alibaba.fastjson.JSON;
 import com.test.Dao.PermissionDao;
 import com.test.Dao.TreeDao;
+import com.test.Dao.UserDao;
 import com.test.Entity.*;
 import com.test.Service.PermissionService;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ public class PermissionServicelmpl implements PermissionService {
     PermissionDao permissionDao;
     @Resource
     TreeDao treeDao;
+    @Resource
+    UserDao userDao;
 
     @Override
     //根据rid 查找 Role
@@ -56,7 +59,14 @@ public class PermissionServicelmpl implements PermissionService {
     @Override
     //删除角色信息
     public String deleteRole(Integer rid) {
-        int ret = permissionDao.deleteRole(rid);
+
+        int ret = permissionDao.deleteRole(rid);    //删除该角色
+        permissionDao.deletePermByRid(rid);         //删除该角色的所有权限
+
+        List<User> users = userDao.findByrId(rid);
+        for(User u : users){
+            userDao.updateRid(null,u.getUid()); //清空所有用户的该角色
+        }
         if(ret == 1){
             return "success";
         }

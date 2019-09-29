@@ -1,14 +1,10 @@
 package com.test.Controller;
 
-import com.test.Entity.Platform;
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
-import com.test.Entity.Votetree;
 import com.test.Service.TreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
@@ -18,6 +14,7 @@ public class TreeController {
 
     @Autowired
     protected TreeService treeService;
+
     /**
      * 获取  某个 平台的全部节点
      */
@@ -26,6 +23,7 @@ public class TreeController {
         System.out.println("获取整棵树结构");
         return treeService.getTree(pid);
     }
+
     /**
      * 获取所有平台的根节点
      */
@@ -65,7 +63,7 @@ public class TreeController {
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public String delTreeNode(@RequestParam String pid,@RequestParam String id){
         System.out.println("删除平台："+pid+"的节点（"+id+"）和它的子节点");
-        return  treeService.delTreeNode(pid,id);
+        return  treeService.deleteNode(pid,id);
     }
 
     /**
@@ -77,7 +75,7 @@ public class TreeController {
         return treeService.findTreeNodeById(pid,id);
     }
 
-    /****************************************************************************/
+
     /**
      * 某用户 获取 某平台 权限内的节点
      */

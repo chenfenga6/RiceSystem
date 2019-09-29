@@ -3,7 +3,6 @@ package com.test.Dao;
 import com.test.Entity.Permission;
 import com.test.Entity.Role;
 import org.apache.ibatis.annotations.*;
-import org.omg.CORBA.INTERNAL;
 
 import java.util.List;
 
@@ -59,6 +58,14 @@ public interface PermissionDao {
     @Delete("delete from permission where id=#{arg0}")
     int deletePermById(Integer id);
 
+    //删除结点（通过rid）
+    @Delete("delete from permission where rid=#{arg0}")
+    int deletePermByRid(Integer rid);
+
     @Delete("delete from permission where rId=#{arg0} and nId=#{arg1} and pId=#{arg2}")
     int deletePermByAll(Integer rid, Integer nid, Integer pid);
+
+    //查找某平台下某节点
+    @Select("select * from permission where pId=#{arg0} and nId=#{arg1}")
+    List<Permission> findByPidAndNid(Integer pid,Integer nid);
 }

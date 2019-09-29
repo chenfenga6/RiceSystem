@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -54,4 +53,5 @@ public class PlatformController {
         System.out.println("查看所有平台信息!!!");
         return platformService.platform_findAll();
     }
+
 }

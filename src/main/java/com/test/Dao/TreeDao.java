@@ -41,7 +41,7 @@ public interface TreeDao {
     @Update("update ${arg0} set cname=#{arg1} where id =#{arg2}")
     int changeTreeNodeCname(String table,String Newname,Integer id);
 
-    /*===============================权限测试========================================================*/
+    /*===============================权限测试===================================================*/
     @Insert("insert into permission(rId,nId,pId) values(#{arg0},#{arg1},#{arg2})")
     int addPermission(Integer rid,Integer nid,Integer pid);
 

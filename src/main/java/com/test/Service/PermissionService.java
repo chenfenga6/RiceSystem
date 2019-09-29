@@ -3,8 +3,6 @@ package com.test.Service;
 import com.test.Entity.Permissiontree;
 import com.test.Entity.Resdata;
 import com.test.Entity.Role;
-import com.test.Entity.Votetree;
-import org.omg.CORBA.INTERNAL;
 
 import java.util.List;
 
