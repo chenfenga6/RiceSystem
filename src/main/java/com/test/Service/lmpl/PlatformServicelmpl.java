@@ -13,6 +13,9 @@ public class PlatformServicelmpl implements PlatformService {
     @Resource
     PlatformDao platformDao;
 
+    public void test() {
+        System.out.println("test");
+    }
     //新增平台
     public String platform_add(Platform platform) {
         //第一步，在platform_data表中插入数据
