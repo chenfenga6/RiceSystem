@@ -1,7 +1,6 @@
 package com.test.Dao;
 
 import com.test.Entity.Platform;
-import com.test.Entity.PlatformTree;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -43,21 +42,21 @@ public interface PlatformDao {
 
     //查找最新的pid
     @Select("select max(pid) from platform_data")
-    int getLastPid();
-
-    //查找某平台（通过 pname）
-    @Select("select * from platform_data where pname=#{pname}")
-    Platform findByPname(String pname);
+    int getLatestPid();
 
     //查看所有平台信息
     @Select("select * from platform_data")
     List<Platform> findAll();
 
+    //删除permission表中某平台所有结点（通过pid)
+    @Delete("delete from permission where pId = #{Pid}")
+    int deletePermByPid(Integer Pid);
 
-    @Select("select * from ${arg0} where pid=#{arg1}")
-    List<PlatformTree> findByTreePid(String table, Integer pid);   //通过Pid查找
+    //更新平台表里根结点名字
+    @Update("update ${arg0} set cname=#{arg1} where id =#{arg2}")
+    int updateNodeName(String table, String Newname, Integer id);
 
-    @Select("select * from ${arg0} where id=#{arg1}")
-    PlatformTree findByTreeId(String table, Integer id);   //通过id查找
-
+    //新增 table表根节点信息
+    @Insert("insert into ${arg0}(cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5})")
+    int addTreeNode(String table,String cname,String ename,Integer pid,String notes,String tag);
 }
