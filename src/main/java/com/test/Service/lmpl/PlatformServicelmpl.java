@@ -13,9 +13,6 @@ public class PlatformServicelmpl implements PlatformService {
     @Resource
     PlatformDao platformDao;
 
-    public void test() {
-        System.out.println("test");
-    }
     //新增平台
     public String platform_add(Platform platform) {
         //第一步，在platform_data表中插入数据
@@ -34,7 +31,7 @@ public class PlatformServicelmpl implements PlatformService {
             return "create_fail";
 
         //第三步,在新建表中插入根节点
-        ret = platformDao.addTreeNode(tableName, platform.getPname(),null,0,null,null);
+        ret = platformDao.addTreeNode(tableName, 1, platform.getPname(),null,0,null,null);
         if(ret == 1) {
             return "success";
         }

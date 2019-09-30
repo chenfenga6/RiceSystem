@@ -89,20 +89,24 @@ public class TreeServicelmpl implements TreeService {
 
     @Override
     //增加 某平台的 某节点
-    public String addTreeNode(String pid,PlatformTree p) {
-        if (p.getCname()== null){
+    public String addTreeNode(String pid, PlatformTree p) {
+        if (p.getCname()== null) {
             return "请输入正确的节点格式！";
         }
-        String table = "platform"+pid;
-        PlatformTree platformTree = new PlatformTree();
-        platformTree = treeDao.findByCname(table,p.getCname());
+        String table = "platform" + pid;
+        PlatformTree platformTree = treeDao.findByCname(table,p.getCname());
         if(platformTree != null){
             return "该节点已存在！不可重名";
         }
-         if(treeDao.addTreeNode(table,p.getCname(),p.getEname(),p.getPid(),p.getNotes(),p.getNotes()) == 1){
-             return "success";
-         }
-        return "faile";
+
+        //得到目前该表最大的id值，加1为新增结点id
+        Integer id = treeDao.getMaxId(table) + 1;
+        System.out.println("maxId = " + id);
+
+        int ret = treeDao.addTreeNode(table, id, p.getCname(),p.getEname(),p.getPid(),p.getNotes(), p.getNotes());
+        if(ret == 1)
+            return "success";
+        return "fail";
     }
 
     @Override
@@ -163,12 +167,14 @@ public class TreeServicelmpl implements TreeService {
 
 
     //排序
-    public String sortTree(HashMap hashMap, Integer pid) {
-        String tableName = "platform" + pid;
+    public String sortTree(HashMap hashMap) {
+        String tableName = "platform" + hashMap.get("id");
+        List<HashMap> list = (List<HashMap>)hashMap.get("data");
 
         //第一步，将数据取出来
         PlatformTree tree = treeDao.findById(tableName, 1);
-        tree = hashToTree(tableName, tree, hashMap);
+
+        tree = hashToTree(tableName, tree, list.get(0));
         System.out.println("排序后的tree： " + tree);
 
         //第二步，删掉数据库这张表的所有记录
@@ -271,7 +277,7 @@ public class TreeServicelmpl implements TreeService {
 
     //将数据写进数据库
     public void writeToMyql(String tableName, PlatformTree tree) {
-        treeDao.addNode2(tableName, tree.getId(), tree.getCname(), tree.getEname(), tree.getPid(),
+        treeDao.addTreeNode(tableName, tree.getId(), tree.getCname(), tree.getEname(), tree.getPid(),
                 tree.getNotes(), tree.getTag());
         List<PlatformTree> treeList = tree.getChildren();
         if(treeList.size() > 0) {

@@ -42,10 +42,10 @@ public class TreeController {
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     public String addTreeNode(@RequestParam String pid,@RequestParam String cname,@RequestParam String ename,
-                              @RequestParam String ppid,@RequestParam String notes, @RequestParam String tag){
+                              @RequestParam Integer ppid,@RequestParam String notes, @RequestParam String tag){
         System.out.println("增加平台："+pid+"的节点："+cname);
-        PlatformTree platformTree = new PlatformTree(cname,ename,Integer.parseInt(ppid),notes,tag);
-        return  treeService.addTreeNode(pid,platformTree);
+        PlatformTree platformTree = new PlatformTree(cname, ename, ppid, notes, tag);
+        return  treeService.addTreeNode(pid, platformTree);
     }
 
     /**
@@ -90,10 +90,9 @@ public class TreeController {
 
     //排序
     @RequestMapping(value = "/sortTree", method = RequestMethod.POST)
-    public String sortTree(@RequestBody HashMap hashMap, @RequestParam Integer pid) {
+    public String sortTree(@RequestBody HashMap hashMap) {
         System.out.println(hashMap);
-        System.out.println(pid);
-        return treeService.sortTree(hashMap, pid);
+        return treeService.sortTree(hashMap);
     }
 
 }

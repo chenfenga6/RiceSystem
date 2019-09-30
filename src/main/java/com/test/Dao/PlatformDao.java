@@ -55,7 +55,7 @@ public interface PlatformDao {
     @Update("update ${arg0} set cname=#{arg1} where id =#{arg2}")
     int updateNodeName(String table, String newName, Integer id);
 
-    //新增 table表根节点信息
-    @Insert("insert into ${arg0}(cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5})")
-    int addTreeNode(String table, String cname, String ename, Integer pid, String notes, String tag);
+    //新增 table 表根节点信息
+    @Insert("insert into ${arg0}(id,cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5},#{arg6})")
+    int addTreeNode(String table, Integer id, String cname, String ename, Integer pid, String notes, String tag);
 }

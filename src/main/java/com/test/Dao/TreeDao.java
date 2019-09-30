@@ -25,11 +25,6 @@ public interface TreeDao {
     @Select("select * from platform_data")
     List<Platform> findAllPlatformPid();
 
-    //新增 table表 节点 信息(id自增)
-    @Insert("insert into ${arg0}(cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5})")
-    @Options(useGeneratedKeys = true,keyProperty = "id")
-    int addTreeNode(String table,String cName,String eName,Integer pid,String notes,String tag);
-
     //修改 table表 节点信息
     @Update("update ${arg0} set cname=#{arg2},ename=#{arg3},pid=#{arg4},notes=#{arg5},tag=#{arg6} where id = #{arg1}")
     int changeTreeNode(String table,Integer id,String cname,String eName,Integer pid,String notes,String tag);
@@ -39,13 +34,17 @@ public interface TreeDao {
     int delTreeNode(String table,Integer id);
 
 
+    //查找最新的id
+    @Select("select max(id) from ${tableName}")
+    int getMaxId(@Param("tableName") String tableName);
+
     //删除表里所有节点
     @Delete("delete from ${table} where 1=1")
     int deleteTable(@Param("table") String table);
 
     //将排序后的树写入数据库
     @Insert("insert into ${arg0}(id,cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5},#{arg6})")
-    int addNode2(String table, Integer id, String cName, String eName,
+    int addTreeNode(String table, Integer id, String cName, String eName,
                  Integer pid, String notes, String tag);
 
 

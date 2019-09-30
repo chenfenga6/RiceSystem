@@ -27,7 +27,7 @@ public interface TreeService {
     String deleteNode(String pid, String nid);
 
     //排序
-    String sortTree(HashMap hashMap, Integer pid);
+    String sortTree(HashMap hashMap);
 
     /***************************权限测试**********************/
 
