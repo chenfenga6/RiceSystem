@@ -8,7 +8,7 @@ public class Votetree {
     private Integer id;                             // 模块编号
     private String title;                           //模块标题
     private boolean spread;                         //是否展开
-    private List children = new ArrayList();        //子节点集合
+    private List<Votetree> children = new ArrayList();        //子节点集合
 
     public Votetree() {
     }

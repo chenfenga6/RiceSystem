@@ -9,6 +9,7 @@ import com.test.Service.TreeService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class TreeServicelmpl implements TreeService {
             return null;
         }
         String table = "platform"+platform.getPid();                //获取到相对应平台的数据库表名称
-        PlatformTree Rootree =treeDao.findById(table,1);        //找到相对应平台的父亲节点
+        PlatformTree Rootree = treeDao.findById(table,1);        //找到相对应平台的父亲节点
 
         Votetree result = getWholeTree(table,Rootree);             //查找所有的子节点
 
@@ -120,8 +121,7 @@ public class TreeServicelmpl implements TreeService {
     @Override
     //通过id查找这个树节点 全部信息和父节点名称
     public Resdata findTreeNodeById(String pid,String id) {
-        PlatformTree node = new PlatformTree();
-        node = getTabAndNode(pid,id);
+        PlatformTree node = getTabAndNode(pid,id);
         List<PlatformTree> list = new ArrayList<>();
         list.add(node);
         Resdata res = new Resdata();
@@ -148,7 +148,8 @@ public class TreeServicelmpl implements TreeService {
 
         for(PlatformTree s:platforms)
             System.out.println("first" + s.getId());
-        deletetreenode(platname,platforms,pid);
+
+        deletetreenode(platname, platforms,pid);
         List<Permission> permissions = permissionDao.findByPidAndNid(Integer.parseInt(pid),platformTree.getId());
         if (permissions.size() != 0){
             for(Permission p : permissions){
@@ -159,6 +160,30 @@ public class TreeServicelmpl implements TreeService {
         treeDao.delTreeNode(platname,Integer.parseInt(nid));
         return "success";
     }
+
+
+    //排序
+    public String sortTree(HashMap hashMap, Integer pid) {
+        String tableName = "platform" + pid;
+
+        //第一步，将数据取出来
+        PlatformTree tree = treeDao.findById(tableName, 1);
+        tree = hashToTree(tableName, tree, hashMap);
+        System.out.println("排序后的tree： " + tree);
+
+        //第二步，删掉数据库这张表的所有记录
+        int ret = treeDao.deleteTable(tableName);
+        if(ret < 0) {
+            return "fail";
+        }
+
+        //第三步，将数据写进数据库
+        writeToMyql(tableName, tree);
+
+        return "success";
+    }
+
+
 
 
     /**********************************方法************************************/
@@ -189,7 +214,7 @@ public class TreeServicelmpl implements TreeService {
 
     //遍历出整棵树（不加权限匹配）
     public Votetree getWholeTree(String table, PlatformTree platformTree){
-        Votetree votetree = new Votetree(platformTree.getId(),platformTree.getCname(),true);
+        Votetree votetree = new Votetree(platformTree.getId(), platformTree.getCname(),true);
         List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
         if( list.size() > 0 ){
             List<Votetree> childlist = new ArrayList<>();
@@ -219,16 +244,41 @@ public class TreeServicelmpl implements TreeService {
 
     // 查找 该节点 的孩子节点
     private List<PlatformTree> getDeeptLevel(String table, PlatformTree platformTree){
-        List<PlatformTree> platformTreeList = new ArrayList<>();
-        platformTreeList = treeDao.findByPid(table,platformTree.getId());
-        return platformTreeList;
+        return treeDao.findByPid(table, platformTree.getId());
     }
 
     //确定表名 + 按照id查找当前信息
     private PlatformTree getTabAndNode(String pid, String id){
         String table = "platform"+pid;
-        PlatformTree p = new PlatformTree();
-        p = treeDao.findById(table,Integer.parseInt(id));
-        return p;
+        return treeDao.findById(table, Integer.parseInt(id));
     }
+
+
+    //将排序前端返回的hashmap转成platform树
+    public PlatformTree hashToTree(String tableName, PlatformTree tree, HashMap hashMap) {
+        List<PlatformTree> platformTrees = new ArrayList<>();
+
+        List<HashMap> list = (List<HashMap>)hashMap.get("children");
+        for(HashMap h : list) {
+            PlatformTree plat = treeDao.findById(tableName, (Integer) h.get("id"));
+            plat.setPid(tree.getId());
+            platformTrees.add(hashToTree(tableName, plat, h));
+        }
+        tree.setChildren(platformTrees);
+
+        return tree;
+    }
+
+    //将数据写进数据库
+    public void writeToMyql(String tableName, PlatformTree tree) {
+        treeDao.addNode2(tableName, tree.getId(), tree.getCname(), tree.getEname(), tree.getPid(),
+                tree.getNotes(), tree.getTag());
+        List<PlatformTree> treeList = tree.getChildren();
+        if(treeList.size() > 0) {
+            for (PlatformTree tr : treeList) {
+                writeToMyql(tableName, tr);
+            }
+        }
+    }
+
 }
