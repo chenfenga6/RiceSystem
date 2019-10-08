@@ -9,6 +9,7 @@ import com.test.Service.TreeService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -89,19 +90,23 @@ public class TreeServicelmpl implements TreeService {
     @Override
     //增加 某平台的 某节点
     public String addTreeNode(String pid,PlatformTree p) {
-        if (p.getCname()== null){
+        if (p.getCname()== null) {
             return "请输入正确的节点格式！";
         }
-        String table = "platform"+pid;
-        PlatformTree platformTree = new PlatformTree();
-        platformTree = treeDao.findByCname(table,p.getCname());
+        String table = "platform" + pid;
+        PlatformTree platformTree = treeDao.findByCname(table,p.getCname());
         if(platformTree != null){
             return "该节点已存在！不可重名";
         }
-         if(treeDao.addTreeNode(table,p.getCname(),p.getEname(),p.getPid(),p.getNotes(),p.getNotes()) == 1){
-             return "success";
-         }
-        return "faile";
+
+        //得到目前该表最大的id值，加1为新增结点id
+        Integer id = treeDao.getMaxId(table) + 1;
+        System.out.println("maxId = " + id);
+
+        int ret = treeDao.addTreeNode(table, id, p.getCname(),p.getEname(),p.getPid(),p.getNotes(), p.getNotes());
+        if(ret == 1)
+            return "success";
+        return "fail";
     }
 
     @Override
@@ -156,6 +161,29 @@ public class TreeServicelmpl implements TreeService {
         return "success";
     }
 
+    //节点排序
+    @Override
+    public String sortTree(HashMap hashMap) {
+        String tableName = "platform" + hashMap.get("id");
+        List<HashMap> list = (List<HashMap>)hashMap.get("data");
+
+        //第一步，将数据取出来
+        PlatformTree tree = treeDao.findById(tableName, 1);
+
+        tree = hashToTree(tableName, tree, list.get(0));
+        System.out.println("排序后的tree： " + tree);
+
+        //第二步，删掉数据库这张表的所有记录
+        int ret = treeDao.deleteTable(tableName);
+        if(ret < 0) {
+            return "fail";
+        }
+
+        //第三步，将数据写进数据库
+        writeToMyql(tableName, tree);
+
+        return "success";
+    }
 
     /**********************************方法************************************/
     //递归查找paltforms下所有子节点并删除
@@ -221,5 +249,32 @@ public class TreeServicelmpl implements TreeService {
         PlatformTree p = new PlatformTree();
         p = treeDao.findById(table,Integer.parseInt(id));
         return p;
+    }
+
+    //将排序前端返回的hashmap转成platform树
+    public PlatformTree hashToTree(String tableName, PlatformTree tree, HashMap hashMap) {
+        List<PlatformTree> platformTrees = new ArrayList<>();
+
+        List<HashMap> list = (List<HashMap>)hashMap.get("children");
+        for(HashMap h : list) {
+            PlatformTree plat = treeDao.findById(tableName, (Integer) h.get("id"));
+            plat.setPid(tree.getId());
+            platformTrees.add(hashToTree(tableName, plat, h));
+        }
+        tree.setChildren(platformTrees);
+
+        return tree;
+    }
+
+    //将数据写进数据库
+    public void writeToMyql(String tableName, PlatformTree tree) {
+        treeDao.addTreeNode(tableName, tree.getId(), tree.getCname(), tree.getEname(), tree.getPid(),
+                tree.getNotes(), tree.getTag());
+        List<PlatformTree> treeList = tree.getChildren();
+        if(treeList.size() > 0) {
+            for (PlatformTree tr : treeList) {
+                writeToMyql(tableName, tr);
+            }
+        }
     }
 }

@@ -70,6 +70,7 @@ public class UserController {
         return userService.Login(uid,upwd,ip);
     }
 
+    //查找所有用户
     @RequestMapping(value = "/findAllUsers",method = RequestMethod.POST)
     public List<User> findAllUsers(){
         return userService.findAllUsers();
