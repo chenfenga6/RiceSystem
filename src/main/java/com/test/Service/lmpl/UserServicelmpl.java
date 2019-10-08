@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServicelmpl implements UserService {
@@ -38,6 +39,7 @@ public class UserServicelmpl implements UserService {
         System.out.println("登陆成功");
         return "登陆成功！";
     }
+
     @Override
     public String adduser(User user)
     {
@@ -91,6 +93,35 @@ public class UserServicelmpl implements UserService {
         }
     }
 
+
+    @Override
+    //返回所有的用户信息
+    public List<User> findAllUsers() {
+        return userDao.findAllUsers();
+    }
+
+    @Override
+    public String changestate(String uid) {
+        int res = userDao.updateUstate(1,Integer.valueOf(uid));
+        if(res == 1){
+            return "success";
+        }
+        else
+        {
+            return "fail";
+        }
+    }
+
+    @Override
+    public String changeroleid(String uid, String roleid) {
+        int res = userDao.updateRoleId(Integer.parseInt(roleid),Integer.parseInt(uid));
+        if(res == 1){
+            return "success";
+        }else {
+            return "fail";
+        }
+    }
+
 //    @Override
 //    public String creat() {
 //        int res = userDao.creattable("table_data");
@@ -100,6 +131,5 @@ public class UserServicelmpl implements UserService {
 //        else {
 //            return "失败";
 //        }
-//
 //    }
 }

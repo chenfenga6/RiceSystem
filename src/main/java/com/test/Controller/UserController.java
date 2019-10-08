@@ -4,6 +4,7 @@ import com.test.Entity.User;
 import com.test.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -67,6 +68,25 @@ public class UserController {
     @ResponseBody
     public String Login(@RequestParam String uid, @RequestParam String upwd,@RequestParam String ip){
         return userService.Login(uid,upwd,ip);
+    }
+
+    @RequestMapping(value = "/findAllUsers",method = RequestMethod.POST)
+    public List<User> findAllUsers(){
+        return userService.findAllUsers();
+    }
+
+    //更改用户审核状态
+    @RequestMapping(value = "/changState",method = RequestMethod.POST)
+    @ResponseBody
+    public String ChangeState(@RequestParam String uid){
+        return userService.changestate(uid);
+    }
+
+    //更改用户角色权限
+    @RequestMapping(value = "/changRoleId",method = RequestMethod.POST)
+    @ResponseBody
+    public String ChangeRoleId(@RequestParam String uid,@RequestParam String roleid){
+        return userService.changeroleid(uid,roleid);
     }
 
 }

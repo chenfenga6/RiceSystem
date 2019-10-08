@@ -7,13 +7,15 @@ import java.util.List;
 
 @Mapper
 public interface UserDao {
+    @Select("select * from user_data") //查找所有用户
+    List<User> findAllUsers();
 
     @Select("select * from user_data where uid=#{uid}")     //通过id找用户
     User findById(Integer uid);
 
     //增加普通用户
-    @Insert("insert into user_data (uname,upwd,spermission,mpermission,ustate,stime,mail,company,suser)" +
-            " values (#{uname},#{upwd},#{spermission},#{mpermission},#{ustate},#{stime},#{mail},#{company},#{suser})")
+    @Insert("insert into user_data (uname,upwd,spermission,mpermission,ustate,mail,company,suser,stime,roleId)" +
+            " values (#{uname},#{upwd},#{spermission},#{mpermission},#{ustate},#{mail},#{company},#{suser},#{stime},#{roleId})")
     @Options(useGeneratedKeys=true, keyProperty="uid", keyColumn="uid")
     int addUser(User user);
 
@@ -43,6 +45,15 @@ public interface UserDao {
     //更改角色信息
     @Update("update user_data set roleId=#{arg0} where uid=#{arg1}")
     int updateRid(Integer rid,Integer uid);
+
+    //更改用户审核状态
+    @Update("update user_data set ustate=#{arg0} where uid=#{arg1}")
+    int updateUstate(Integer ustate,Integer uid);
+
+    //更改用户角色权限
+    @Update("update user_data set roleId=#{arg0} where uid=#{arg1}")
+    int updateRoleId(Integer roleId,Integer uid);
+
 
 //    @Update("create table ${tablename} (id int(10) KEY NOT NULL AUTO_INCREMENT, " +
 //            "name varchar(10))ENGINE=InnoDB DEFAULT CHARSET=utf8")
