@@ -2,9 +2,12 @@ package com.test.Controller;
 
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
+import com.test.Entity.Votetree;
 import com.test.Service.TreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -39,10 +42,10 @@ public class TreeController {
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     public String addTreeNode(@RequestParam String pid,@RequestParam String cname,@RequestParam String ename,
-                              @RequestParam String ppid,@RequestParam String notes, @RequestParam String tag){
+                              @RequestParam Integer ppid,@RequestParam String notes, @RequestParam String tag){
         System.out.println("增加平台："+pid+"的节点："+cname);
-        PlatformTree platformTree = new PlatformTree(cname,ename,Integer.parseInt(ppid),notes,tag);
-        return  treeService.addTreeNode(pid,platformTree);
+        PlatformTree platformTree = new PlatformTree(cname, ename, ppid, notes, tag);
+        return  treeService.addTreeNode(pid, platformTree);
     }
 
     /**
@@ -83,6 +86,13 @@ public class TreeController {
     public Resdata getTreeOrdinal(@RequestParam String uid,@RequestParam String pid){
         System.out.println("用户:"+uid+"获取<权限内>的树结构");
         return treeService.getTreeOrdinal(Integer.parseInt(uid),Integer.parseInt(pid));
+    }
+
+    //排序
+    @RequestMapping(value = "/sortTree", method = RequestMethod.POST)
+    public String sortTree(@RequestBody HashMap hashMap) {
+        System.out.println(hashMap);
+        return treeService.sortTree(hashMap);
     }
 
 }

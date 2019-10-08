@@ -2,7 +2,9 @@ package com.test.Service;
 
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
+import com.test.Entity.Votetree;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface TreeService {
@@ -24,10 +26,12 @@ public interface TreeService {
     //删除 某平台的 某节点（包括它的子节点）
     String deleteNode(String pid, String nid);
 
+    //排序
+    String sortTree(HashMap hashMap);
+
     /***************************权限测试**********************/
 
     //某用户 获取权限内的 某平台 节点
     Resdata getTreeOrdinal(Integer uid,Integer pid);
-
 
 }

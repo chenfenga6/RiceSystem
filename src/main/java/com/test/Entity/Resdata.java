@@ -44,4 +44,13 @@ public class Resdata {
     public void setData(List data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "Resdata{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }

@@ -14,13 +14,12 @@ public interface PlatformDao {
 
     //新建表
     @Update("create table ${tableName} (" +
-            "id int(11) NOT NULL AUTO_INCREMENT," +
+            "id int(11) NOT NULL," +
             "cname varchar(255) NOT NULL," +
             "ename varchar(255) DEFAULT NULL," +
             "pid int(11) NOT NULL," +
             "notes varchar(255) DEFAULT NULL," +
-            "tag varchar(255) DEFAULT NULL," +
-            "PRIMARY KEY (id)) " +
+            "tag varchar(255) DEFAULT NULL ) " +
             "ENGINE=InnoDB DEFAULT CHARSET=utf8")
     int createTab(@Param("tableName") String tableName);
 
@@ -54,9 +53,9 @@ public interface PlatformDao {
 
     //更新平台表里根结点名字
     @Update("update ${arg0} set cname=#{arg1} where id =#{arg2}")
-    int updateNodeName(String table, String Newname, Integer id);
+    int updateNodeName(String table, String newName, Integer id);
 
-    //新增 table表根节点信息
-    @Insert("insert into ${arg0}(cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5})")
-    int addTreeNode(String table,String cname,String ename,Integer pid,String notes,String tag);
+    //新增 table 表根节点信息
+    @Insert("insert into ${arg0}(id,cname,ename,pid,notes,tag) values(#{arg1},#{arg2},#{arg3},#{arg4},#{arg5},#{arg6})")
+    int addTreeNode(String table, Integer id, String cname, String ename, Integer pid, String notes, String tag);
 }

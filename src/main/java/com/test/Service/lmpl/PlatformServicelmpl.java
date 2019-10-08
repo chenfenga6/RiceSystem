@@ -31,7 +31,7 @@ public class PlatformServicelmpl implements PlatformService {
             return "create_fail";
 
         //第三步,在新建表中插入根节点
-        ret = platformDao.addTreeNode(tableName, platform.getPname(),null,0,null,null);
+        ret = platformDao.addTreeNode(tableName, 1, platform.getPname(),null,0,null,null);
         if(ret == 1) {
             return "success";
         }
