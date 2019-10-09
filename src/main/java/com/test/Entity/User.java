@@ -1,5 +1,8 @@
 package com.test.Entity;
 
+/**
+ * <用户信息> 实体类
+ */
 public class User {
     private Integer uid ;
     private String uname;

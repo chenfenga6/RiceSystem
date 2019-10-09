@@ -7,7 +7,7 @@ import com.test.Entity.Votetree;
 import java.util.HashMap;
 import java.util.List;
 
-public interface TreeService {
+public interface SysFunService {
     //获取某个平台的树结构
     Resdata getTree(String pid);
 

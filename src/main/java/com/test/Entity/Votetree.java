@@ -3,7 +3,9 @@ package com.test.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-//用来给前端展示树的结构
+/**
+ * 用来给前端展示树的结构
+ */
 public class Votetree {
     private Integer id;                             // 模块编号
     private String title;                           //模块标题

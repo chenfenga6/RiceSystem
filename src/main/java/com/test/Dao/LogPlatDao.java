@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface PlatformDao {
+public interface LogPlatDao {
 
     //新增平台
     @Insert("insert into platform_data(pname, pcode, purl, plog) values(#{arg0}, #{arg1}, #{arg2}, #{arg3})")

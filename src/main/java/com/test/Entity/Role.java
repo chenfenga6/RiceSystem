@@ -1,5 +1,8 @@
 package com.test.Entity;
 
+/**
+ * <角色信息> 实体类
+ */
 public class Role {
     Integer rid;
     String rname;

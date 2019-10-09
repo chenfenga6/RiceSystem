@@ -1,5 +1,8 @@
 package com.test.Entity;
 
+/**
+ * <平台信息> 实体类
+ */
 public class Platform {
     private Integer pid ;
     private String pname;

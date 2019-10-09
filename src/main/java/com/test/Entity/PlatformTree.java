@@ -3,7 +3,7 @@ package com.test.Entity;
 import java.util.List;
 
 /**
- * 用来描述平台中 各个模块之间的树型关系
+ * 用来描述平台中 各个模块之间的 <树型关系>
  */
 public class PlatformTree {
     private Integer id;             //模块id

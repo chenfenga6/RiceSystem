@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface TreeDao {
+public interface SysFunDao {
     //通过Id查找节点
     @Select("select * from ${arg0} where id=#{arg1}")
     PlatformTree findById(String table,Integer id);

@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface PermissionDao {
+public interface LogRoleDao {
     /*******************************************Role表**********************************/
     //通过rid 查找Role
     @Select("select * from role where rid=#{arg0}")

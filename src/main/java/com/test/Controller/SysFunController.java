@@ -2,8 +2,7 @@ package com.test.Controller;
 
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
-import com.test.Entity.Votetree;
-import com.test.Service.TreeService;
+import com.test.Service.SysFunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +12,10 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*",maxAge = 3600)
 @RequestMapping("/tree")
-public class TreeController {
+public class SysFunController {
 
     @Autowired
-    protected TreeService treeService;
+    protected SysFunService sysFunService;
 
     /**
      * 获取  某个 平台的全部节点
@@ -24,7 +23,7 @@ public class TreeController {
     @RequestMapping(value = "/getTree",method = RequestMethod.POST)
     public Resdata getTree(@RequestParam String pid){
         System.out.println("获取整棵树结构");
-        return treeService.getTree(pid);
+        return sysFunService.getTree(pid);
     }
 
     /**
@@ -33,7 +32,7 @@ public class TreeController {
     @RequestMapping(value = "/getAllPid",method = RequestMethod.POST)
     public List<Resdata> getAllPid(){
         System.out.println("获取所有平台的根节点");
-        return  treeService.getAllPid();
+        return  sysFunService.getAllPid();
     }
 
     /**
@@ -45,7 +44,7 @@ public class TreeController {
                               @RequestParam Integer ppid,@RequestParam String notes, @RequestParam String tag){
         System.out.println("增加平台："+pid+"的节点："+cname);
         PlatformTree platformTree = new PlatformTree(cname, ename, ppid, notes, tag);
-        return  treeService.addTreeNode(pid, platformTree);
+        return  sysFunService.addTreeNode(pid, platformTree);
     }
 
     /**
@@ -57,7 +56,7 @@ public class TreeController {
                                  @RequestParam String tag){
         System.out.println("修改平台："+pid+"的节点:"+id+"的信息");
         PlatformTree platformTree = new PlatformTree(Integer.parseInt(id),cname,ename,Integer.parseInt(ppid),notes,tag);
-        return  treeService.changeTreeNode(pid,platformTree);
+        return  sysFunService.changeTreeNode(pid,platformTree);
     }
 
     /**
@@ -66,7 +65,7 @@ public class TreeController {
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public String delTreeNode(@RequestParam String pid,@RequestParam String id){
         System.out.println("删除平台："+pid+"的节点（"+id+"）和它的子节点");
-        return  treeService.deleteNode(pid,id);
+        return  sysFunService.deleteNode(pid,id);
     }
 
     /**
@@ -75,7 +74,7 @@ public class TreeController {
     @RequestMapping(value = "/findTreeNode",method = RequestMethod.POST)
     public Resdata findTreeNodeById(@RequestParam String pid,@RequestParam String id){
         System.out.println("查找平台："+pid+"节点id为："+id+"的节点信息");
-        return treeService.findTreeNodeById(pid,id);
+        return sysFunService.findTreeNodeById(pid,id);
     }
 
 
@@ -85,14 +84,14 @@ public class TreeController {
     @RequestMapping(value = "/getTreeOrdinal",method = RequestMethod.POST)
     public Resdata getTreeOrdinal(@RequestParam String uid,@RequestParam String pid){
         System.out.println("用户:"+uid+"获取<权限内>的树结构");
-        return treeService.getTreeOrdinal(Integer.parseInt(uid),Integer.parseInt(pid));
+        return sysFunService.getTreeOrdinal(Integer.parseInt(uid),Integer.parseInt(pid));
     }
 
     //排序
     @RequestMapping(value = "/sortTree", method = RequestMethod.POST)
     public String sortTree(@RequestBody HashMap hashMap) {
         System.out.println(hashMap);
-        return treeService.sortTree(hashMap);
+        return sysFunService.sortTree(hashMap);
     }
 
 }

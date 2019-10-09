@@ -6,7 +6,7 @@ import com.test.Entity.Role;
 
 import java.util.List;
 
-public interface PermissionService {
+public interface LogRoleService {
     /********************************role表***********************************/
     //根据rid 查找 Role
     String findRoleByRid(Integer rid);

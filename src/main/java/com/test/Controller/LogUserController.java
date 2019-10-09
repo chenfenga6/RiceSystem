@@ -1,7 +1,7 @@
 package com.test.Controller;
 
 import com.test.Entity.User;
-import com.test.Service.UserService;
+import com.test.Service.LogUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
-public class UserController {
+public class LogUserController {
     @Autowired
-    protected UserService userService;
+    protected LogUserService logUserService;
 
     /**
      * 管理员创建用户
@@ -22,7 +22,7 @@ public class UserController {
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
     public String Useradd(@RequestBody User user){
-        return userService.adduser(user);
+        return logUserService.adduser(user);
     }
 
     /**
@@ -34,7 +34,7 @@ public class UserController {
     @ResponseBody
     public String Userdel(@RequestParam String uid)
     {
-        return userService.deluser(uid);
+        return logUserService.deluser(uid);
     }
 
     /**
@@ -45,7 +45,7 @@ public class UserController {
     @RequestMapping(value = "/cha",method = RequestMethod.POST)
     @ResponseBody
     public String Userchange(@RequestBody User user){
-        return userService.updateuser(user);
+        return logUserService.updateuser(user);
     }
 
     /**
@@ -55,7 +55,7 @@ public class UserController {
     @RequestMapping(value = "/find",method = RequestMethod.POST)
     @ResponseBody
     public User Userfind(@RequestParam String uid){
-        return userService.findById(uid);
+        return logUserService.findById(uid);
     }
 
     /**
@@ -67,27 +67,27 @@ public class UserController {
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
     public String Login(@RequestParam String uid, @RequestParam String upwd,@RequestParam String ip){
-        return userService.Login(uid,upwd,ip);
+        return logUserService.Login(uid,upwd,ip);
     }
 
     //查找所有用户
     @RequestMapping(value = "/findAllUsers",method = RequestMethod.POST)
     public List<User> findAllUsers(){
-        return userService.findAllUsers();
+        return logUserService.findAllUsers();
     }
 
     //更改用户审核状态
     @RequestMapping(value = "/changState",method = RequestMethod.POST)
     @ResponseBody
     public String ChangeState(@RequestParam String uid){
-        return userService.changestate(uid);
+        return logUserService.changestate(uid);
     }
 
     //更改用户角色权限
     @RequestMapping(value = "/changRoleId",method = RequestMethod.POST)
     @ResponseBody
     public String ChangeRoleId(@RequestParam String uid,@RequestParam String roleid){
-        return userService.changeroleid(uid,roleid);
+        return logUserService.changeroleid(uid,roleid);
     }
 
 }

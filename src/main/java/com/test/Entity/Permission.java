@@ -1,5 +1,8 @@
 package com.test.Entity;
 
+/**
+ * < 权限 > 实体类
+ */
 public class Permission {
     Integer id ;
     Integer rId ;

@@ -3,7 +3,7 @@ package com.test.Service;
 import com.test.Entity.Platform;
 import java.util.List;
 
-public interface PlatformService {
+public interface LogPlatService {
     //新增平台
     String platform_add(Platform platform);
 

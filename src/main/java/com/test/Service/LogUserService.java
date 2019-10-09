@@ -4,7 +4,7 @@ import com.test.Entity.User;
 
 import java.util.List;
 
-public interface UserService {
+public interface LogUserService {
     // String Login(String uid, String upwd);
 
     String adduser(User user);

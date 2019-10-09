@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface UserDao {
+public interface LogUserDao {
     @Select("select * from user_data") //查找所有用户
     List<User> findAllUsers();
 

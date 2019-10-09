@@ -2,6 +2,9 @@ package com.test.Entity;
 
 import java.util.List;
 
+/**
+ * 前端需要的数据形式
+ */
 public class Resdata {
     private Integer id;
     private String name;

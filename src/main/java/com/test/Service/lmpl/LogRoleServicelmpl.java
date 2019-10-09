@@ -1,39 +1,39 @@
 package com.test.Service.lmpl;
 
 import com.alibaba.fastjson.JSON;
-import com.test.Dao.PermissionDao;
-import com.test.Dao.TreeDao;
-import com.test.Dao.UserDao;
+import com.test.Dao.LogRoleDao;
+import com.test.Dao.SysFunDao;
+import com.test.Dao.LogUserDao;
 import com.test.Entity.*;
-import com.test.Service.PermissionService;
+import com.test.Service.LogRoleService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class PermissionServicelmpl implements PermissionService {
+public class LogRoleServicelmpl implements LogRoleService {
     @Resource
-    PermissionDao permissionDao;
+    LogRoleDao logRoleDao;
     @Resource
-    TreeDao treeDao;
+    SysFunDao sysFunDao;
     @Resource
-    UserDao userDao;
+    LogUserDao logUserDao;
 
     @Override
     //根据rid 查找 Role
     public String findRoleByRid(Integer rid) {
-        Role role = permissionDao.findByRid(rid);
+        Role role = logRoleDao.findByRid(rid);
         return JSON.toJSONString(role);
     }
 
     @Override
     //增加角色
     public String addRole(String rname,String notes) {
-        if(permissionDao.findByRname(rname) != null){
+        if(logRoleDao.findByRname(rname) != null){
             return "该角色已存在";
         }
-        int ret = permissionDao.addRole(rname,notes);
+        int ret = logRoleDao.addRole(rname,notes);
         if(ret == 1){
             return "success";
         }
@@ -43,13 +43,13 @@ public class PermissionServicelmpl implements PermissionService {
     @Override
     //显示当前所有角色
     public List<Role> findAllRoles() {
-        return permissionDao.findAllRoles();
+        return logRoleDao.findAllRoles();
     }
 
     @Override
     //修改角色信息
     public String changeRole(Integer rid, String rname, String notes) {
-        int ret = permissionDao.changeRole(rid,rname,notes);
+        int ret = logRoleDao.changeRole(rid,rname,notes);
         if(ret==1){
             return "success";
         }
@@ -60,12 +60,12 @@ public class PermissionServicelmpl implements PermissionService {
     //删除角色信息
     public String deleteRole(Integer rid) {
 
-        int ret = permissionDao.deleteRole(rid);    //删除该角色
-        permissionDao.deletePermByRid(rid);         //删除该角色的所有权限
+        int ret = logRoleDao.deleteRole(rid);    //删除该角色
+        logRoleDao.deletePermByRid(rid);         //删除该角色的所有权限
 
-        List<User> users = userDao.findByrId(rid);
+        List<User> users = logUserDao.findByrId(rid);
         for(User u : users){
-            userDao.updateRid(null,u.getUid()); //清空所有用户的该角色
+            logUserDao.updateRid(null,u.getUid()); //清空所有用户的该角色
         }
         if(ret == 1){
             return "success";
@@ -76,12 +76,12 @@ public class PermissionServicelmpl implements PermissionService {
     @Override
     //增加某角色的某平台权限
     public String addPermission(Integer rid, Integer pid, List<Permissiontree> list) {
-        List<Permission> isHavePerm = permissionDao.findPermissionByRidAndPid(rid,pid);
+        List<Permission> isHavePerm = logRoleDao.findPermissionByRidAndPid(rid,pid);
         if(list.size() == 0){
             System.out.println("传送的是空树!");
             //还要加一个 如果Perm表中有权限  就得删除的方法
             for(Permission pn: isHavePerm){
-                permissionDao.deletePermById(pn.getId());
+                logRoleDao.deletePermById(pn.getId());
             }
             return "空权限！";
         }
@@ -99,7 +99,7 @@ public class PermissionServicelmpl implements PermissionService {
             TreetoList(list.get(0),now);
             updataPerm(rid,pid,before,now);                 //修改 rid&pid 的 nid
         }
-        isHavePerm = permissionDao.findPermissionByRidAndPid(rid,pid);
+        isHavePerm = logRoleDao.findPermissionByRidAndPid(rid,pid);
         System.out.println("目前已有权限（"+isHavePerm.size()+"）个");
         return "success";
     }
@@ -108,10 +108,10 @@ public class PermissionServicelmpl implements PermissionService {
     //查看 某角色 某平台 已分配的权限
     public Resdata findPermByRAndP(Integer rid, Integer pid) {
         String table ="platform"+pid;
-        PlatformTree rootree = treeDao.findById(table,1);
+        PlatformTree rootree = sysFunDao.findById(table,1);
 
         List<Integer> arry = new ArrayList<>();
-        List<Permission> list = permissionDao.findPermissionByRidAndPid(rid,pid);
+        List<Permission> list = logRoleDao.findPermissionByRidAndPid(rid,pid);
         for(Permission pn : list){
             arry.add(pn.getnId());
         }
@@ -131,7 +131,7 @@ public class PermissionServicelmpl implements PermissionService {
     //遍历 List <Permissiontree> 并存储权限结点
     private void traverseTree(Permissiontree rootTree,Integer rid,Integer pid){
 //        System.out.println("权限+1");
-        permissionDao.addPermission(rid,rootTree.getId(),pid);
+        logRoleDao.addPermission(rid,rootTree.getId(),pid);
         List<Permissiontree> childlist = rootTree.getChildren();
         if(childlist.size() > 0 ){
             for(int i = 0 ; i < childlist.size() ; i++){
@@ -155,7 +155,7 @@ public class PermissionServicelmpl implements PermissionService {
     //遍历整棵树 不打勾
     private Permissiontree getCheckTree(String table, PlatformTree platformTree){
         Permissiontree ptree = new Permissiontree(platformTree.getId(),platformTree.getCname(),true,false);
-        List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
+        List<PlatformTree> list = sysFunDao.findByPid(table,platformTree.getId());
         if( list.size() > 0 ){
             List<Permissiontree> childlist = new ArrayList<>();
             for(PlatformTree pt : list){
@@ -169,7 +169,7 @@ public class PermissionServicelmpl implements PermissionService {
     //遍历整棵树 找出权限内的叶子结点 并打勾
     private Permissiontree getCheckTree(String table, PlatformTree platformTree, List arry){
         Permissiontree ptree = new Permissiontree(platformTree.getId(),platformTree.getCname(),true,false);
-        List<PlatformTree> list = treeDao.findByPid(table,platformTree.getId());
+        List<PlatformTree> list = sysFunDao.findByPid(table,platformTree.getId());
         if( list.size() > 0 ){
             List<Permissiontree> childlist = new ArrayList<>();
             for(PlatformTree pt : list){
@@ -189,13 +189,13 @@ public class PermissionServicelmpl implements PermissionService {
             if( ! before.contains(now.get(i))){
 //                System.out.println("权限add+1");
                 before.add(now.get(i));
-                permissionDao.addPermission(rid,now.get(i),pid);
+                logRoleDao.addPermission(rid,now.get(i),pid);
             }
         }
         for (int i = 0 ; i < before.size() ; i++){          //删除结点
             if(! now.contains(before.get(i))){
 //                System.out.println("权限sub-1");
-                permissionDao.deletePermByAll(rid,before.get(i),pid);
+                logRoleDao.deletePermByAll(rid,before.get(i),pid);
             }
         }
     }

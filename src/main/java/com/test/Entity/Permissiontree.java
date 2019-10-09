@@ -3,6 +3,9 @@ package com.test.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  <权限树结构> 实体类
+ */
 public class Permissiontree {
     private Integer id;                             // 模块编号
     private String title;                           //模块标题

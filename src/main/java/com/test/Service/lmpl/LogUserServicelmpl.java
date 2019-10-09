@@ -1,8 +1,8 @@
 package com.test.Service.lmpl;
 
-import com.test.Dao.UserDao;
+import com.test.Dao.LogUserDao;
 import com.test.Entity.User;
-import com.test.Service.UserService;
+import com.test.Service.LogUserService;
 import com.test.tool.MD5;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -11,9 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class UserServicelmpl implements UserService {
+public class LogUserServicelmpl implements LogUserService {
     @Resource
-    private UserDao userDao;
+    private LogUserDao logUserDao;
 
     @Override
     public String Login(String uid, String upwd,String ip) {
@@ -22,7 +22,7 @@ public class UserServicelmpl implements UserService {
             return "账号或密码不可为空！";
         }
         User userinfor = new User();                 //存放该用户的数据库信息
-        userinfor = userDao.findById(Integer.parseInt(uid));
+        userinfor = logUserDao.findById(Integer.parseInt(uid));
 
         String passwd = MD5.encode(upwd);
         if(userinfor == null){
@@ -35,7 +35,7 @@ public class UserServicelmpl implements UserService {
         Date date =new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
         String date1 = sdf.format(date);
-        int res = userDao.uplogin(date1,ip,uid);
+        int res = logUserDao.uplogin(date1,ip,uid);
         System.out.println("登陆成功");
         return "登陆成功！";
     }
@@ -49,7 +49,7 @@ public class UserServicelmpl implements UserService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
         String date1 = sdf.format(date);        //获取当前时间
         user.setStime(date1);
-        int res = userDao.addUser(user);
+        int res = logUserDao.addUser(user);
         if(res == 1){
             return String.valueOf(user.getUid());
         }
@@ -61,7 +61,7 @@ public class UserServicelmpl implements UserService {
 
     @Override
     public String deluser(String uid) {
-        int res = userDao.delUser(uid);
+        int res = logUserDao.delUser(uid);
         if(res == 1){
             return "删除用户成功";
         }
@@ -73,7 +73,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public String updateuser(User user) {
         user.setUpwd(MD5.encode(user.getUpwd()));;
-        int res = userDao.update(user);
+        int res = logUserDao.update(user);
         if(res == 1){
             return "更改用户信息成功";
         }
@@ -84,7 +84,7 @@ public class UserServicelmpl implements UserService {
 
     @Override
     public User findById(String uid) {
-        User user = userDao.findById(Integer.valueOf(uid));
+        User user = logUserDao.findById(Integer.valueOf(uid));
         if(user == null){
             return null;
         }
@@ -97,12 +97,12 @@ public class UserServicelmpl implements UserService {
     @Override
     //返回所有的用户信息
     public List<User> findAllUsers() {
-        return userDao.findAllUsers();
+        return logUserDao.findAllUsers();
     }
 
     @Override
     public String changestate(String uid) {
-        int res = userDao.updateUstate(1,Integer.valueOf(uid));
+        int res = logUserDao.updateUstate(1,Integer.valueOf(uid));
         if(res == 1){
             return "success";
         }
@@ -114,7 +114,7 @@ public class UserServicelmpl implements UserService {
 
     @Override
     public String changeroleid(String uid, String roleid) {
-        int res = userDao.updateRoleId(Integer.parseInt(roleid),Integer.parseInt(uid));
+        int res = logUserDao.updateRoleId(Integer.parseInt(roleid),Integer.parseInt(uid));
         if(res == 1){
             return "success";
         }else {
@@ -124,7 +124,7 @@ public class UserServicelmpl implements UserService {
 
 //    @Override
 //    public String creat() {
-//        int res = userDao.creattable("table_data");
+//        int res = logUserDao.creattable("table_data");
 //        if(res == 1){
 //            return "成功";
 //        }
