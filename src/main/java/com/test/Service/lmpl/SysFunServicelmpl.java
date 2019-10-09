@@ -73,6 +73,26 @@ public class SysFunServicelmpl implements SysFunService {
     }
 
     @Override
+    //获取某个用户 拥有权限 的 <平台>
+    public List<Platform> getPlatAuthorized(Integer uid) {
+        User user = logUserDao.findById(uid);
+        if(user == null){
+            System.out.println( "该用户不存在");
+            return null;
+        }
+        List<Permission> lPerm = logRoleDao.findPermissionByRid(user.getRoleId());
+        List<Integer> lPid = new ArrayList<>();
+        List<Platform> lPlat = new ArrayList<>();
+        for(Permission pn : lPerm){
+            if(! lPid.contains(pn.getpId())){
+                lPid.add(pn.getpId());
+                lPlat.add(logPlatDao.findByPid(pn.getpId()));
+            }
+        }
+        return lPlat;
+    }
+
+    @Override
     //获取所有平台的根节点
     public List<Resdata> getAllPid() {
         List<Resdata> resdata = new ArrayList<>();
@@ -234,13 +254,6 @@ public class SysFunServicelmpl implements SysFunService {
             votetree.setChildren(childlist);
         }
         return votetree;
-    }
-
-    // 查找 该节点 的孩子节点
-    private List<PlatformTree> getDeeptLevel(String table, PlatformTree platformTree){
-        List<PlatformTree> platformTreeList = new ArrayList<>();
-        platformTreeList = sysFunDao.findByPid(table,platformTree.getId());
-        return platformTreeList;
     }
 
     //确定表名 + 按照id查找当前信息

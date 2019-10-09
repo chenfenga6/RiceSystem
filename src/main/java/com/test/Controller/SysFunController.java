@@ -1,5 +1,6 @@
 package com.test.Controller;
 
+import com.test.Entity.Platform;
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
 import com.test.Service.SysFunService;
@@ -79,12 +80,21 @@ public class SysFunController {
 
 
     /**
-     * 某用户 获取 某平台 权限内的节点
+     * 某用户 获取 某平台 权限内(Authorized) 的节点
      */
-    @RequestMapping(value = "/getTreeOrdinal",method = RequestMethod.POST)
+    @RequestMapping(value = "/getTreeAuthorized",method = RequestMethod.POST)
     public Resdata getTreeOrdinal(@RequestParam String uid,@RequestParam String pid){
-        System.out.println("用户:"+uid+"获取<权限内>的树结构");
+        System.out.println("用户:"+uid+"获取 权限内 的 <树结构>");
         return sysFunService.getTreeOrdinal(Integer.parseInt(uid),Integer.parseInt(pid));
+    }
+
+    /**
+     * 获取 某用户 权限内(Authorized) 的平台
+     */
+    @RequestMapping(value = "/getPlatAuthorized",method = RequestMethod.POST)
+    public List<Platform> getPlatAuthorized(@RequestParam Integer uid){
+        System.out.println("用户："+uid+"获取 权限内 的 <平台信息>");
+        return sysFunService.getPlatAuthorized(uid);
     }
 
     //排序

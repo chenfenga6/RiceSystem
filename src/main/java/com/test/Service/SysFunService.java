@@ -1,5 +1,6 @@
 package com.test.Service;
 
+import com.test.Entity.Platform;
 import com.test.Entity.PlatformTree;
 import com.test.Entity.Resdata;
 import com.test.Entity.Votetree;
@@ -33,5 +34,8 @@ public interface SysFunService {
 
     //某用户 获取权限内的 某平台 节点
     Resdata getTreeOrdinal(Integer uid,Integer pid);
+
+    //获取 某用户 权限内(Authorized) 的平台
+    List<Platform> getPlatAuthorized(Integer uid);
 
 }

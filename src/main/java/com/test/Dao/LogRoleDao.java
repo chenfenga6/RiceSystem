@@ -42,9 +42,13 @@ public interface LogRoleDao {
     @Select("select * from permission where rId=#{arg0} and pId=#{arg1}")
     List<Permission> findPermissionByRidAndPid(Integer rid, Integer pid);
 
-    //查询 角色为rid 平台为pid 的权限条数
+    //查询角色为rid 平台为pid 的权限条数
     @Select("select count(*) from permission where rid=#{arg0} and pid=#{arg1}")
     int countPermByRandP(Integer rid,Integer pid);
+
+    //按rid 查询所有权限
+    @Select("select * from permission where rId=#{arg0}")
+    List<Permission> findPermissionByRid(Integer rid);
 
     //插入权限节点
     @Insert("insert into permission(rId,nId,pId) values(#{arg0},#{arg1},#{arg2})")
