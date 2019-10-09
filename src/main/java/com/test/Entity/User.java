@@ -9,7 +9,7 @@ public class User {
     private String upwd;
     private String spermission; //系统权限
     private String mpermission; //物料权限
-    private String ustate = "0";      //状态(启用-1/待审核-0)
+    private String ustate = "0"; //状态(启用-1/待审核-0)
     private Integer suser;      //超级用户标识
     private  String stime;      //注册时间
     private String mail;        //邮箱

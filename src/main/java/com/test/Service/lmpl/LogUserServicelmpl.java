@@ -37,7 +37,7 @@ public class LogUserServicelmpl implements LogUserService {
         String date1 = sdf.format(date);
         int res = logUserDao.uplogin(date1,ip,uid);
         System.out.println("登陆成功");
-        return "登陆成功！";
+        return userinfor.getSuser().toString();
     }
 
     @Override

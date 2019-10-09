@@ -5,7 +5,9 @@ import com.test.Dao.LogPlatDao;
 import com.test.Dao.SysFunDao;
 import com.test.Dao.LogUserDao;
 import com.test.Entity.*;
+import com.test.Service.LogRoleService;
 import com.test.Service.SysFunService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public class SysFunServicelmpl implements SysFunService {
     LogUserDao logUserDao;
     @Resource
     LogRoleDao logRoleDao;
+    @Autowired
+    LogRoleService logRoleService;
 
     @Override
     //获取某个平台的树结构(无权限)

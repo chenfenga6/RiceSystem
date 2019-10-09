@@ -140,6 +140,7 @@ public class LogRoleServicelmpl implements LogRoleService {
             }
         }
     }
+
     //遍历 填充now List
     private void TreetoList(Permissiontree rootTree,List<Integer> now){
         now.add(rootTree.getId());
@@ -167,7 +168,7 @@ public class LogRoleServicelmpl implements LogRoleService {
     }
 
     //遍历整棵树 找出权限内的叶子结点 并打勾
-    private Permissiontree getCheckTree(String table, PlatformTree platformTree, List arry){
+    public Permissiontree getCheckTree(String table, PlatformTree platformTree, List arry){
         Permissiontree ptree = new Permissiontree(platformTree.getId(),platformTree.getCname(),true,false);
         List<PlatformTree> list = sysFunDao.findByPid(table,platformTree.getId());
         if( list.size() > 0 ){
