@@ -24,11 +24,11 @@ public class LogUserServicelmpl implements LogUserService {
         User userinfor = new User();                 //存放该用户的数据库信息
         userinfor = logUserDao.findById(Integer.parseInt(uid));
 
-        String passwd = MD5.encode(upwd);
+//        String passwd = MD5.encode(upwd);
         if(userinfor == null){
             return "该用户不存在！请先注册！";
         }
-        if (!(passwd.equals( userinfor.getUpwd() )))
+        if (!(upwd.equals( userinfor.getUpwd() )))
         {
             return "账号或密码不正确！";
         }
@@ -43,8 +43,8 @@ public class LogUserServicelmpl implements LogUserService {
     @Override
     public String adduser(User user)
     {
-        String passwd = MD5.encode(user.getUpwd());
-        user.setUpwd(passwd);
+//        String passwd = MD5.encode(user.getUpwd());
+//        user.setUpwd(passwd);
         Date  date =new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
         String date1 = sdf.format(date);        //获取当前时间
@@ -72,7 +72,7 @@ public class LogUserServicelmpl implements LogUserService {
 
     @Override
     public String updateuser(User user) {
-        user.setUpwd(MD5.encode(user.getUpwd()));;
+//        user.setUpwd(MD5.encode(user.getUpwd()));
         int res = logUserDao.update(user);
         if(res == 1){
             return "更改用户信息成功";

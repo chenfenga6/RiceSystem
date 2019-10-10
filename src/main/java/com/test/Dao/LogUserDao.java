@@ -29,8 +29,8 @@ public interface LogUserDao {
     int delUser(String uid);
 
     //更改用户信息
-    @Update("update user_data set uname=#{uname},upwd=#{upwd}," +
-            "spermission=#{spermission},mpermission=#{mpermission},mail=#{mail},company=#{company}" +
+    @Update("update user_data set uname=#{uname}," +
+            "mail=#{mail},company=#{company},roleId=#{roleId}" +
             " where uid=#{uid}")
     int update(User user);
 
