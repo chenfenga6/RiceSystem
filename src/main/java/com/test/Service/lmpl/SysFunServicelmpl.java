@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class SysFunServicelmpl implements SysFunService {
@@ -185,7 +186,7 @@ public class SysFunServicelmpl implements SysFunService {
         return "success";
     }
 
-    //节点排序
+    //排序(等待实现节点拖动的排序--暂时不用)
     @Override
     public String sortTree(HashMap hashMap) {
         String tableName = "platform" + hashMap.get("id");
@@ -205,6 +206,21 @@ public class SysFunServicelmpl implements SysFunService {
 
         //第三步，将数据写进数据库
         writeToMyql(tableName, tree);
+
+        return "success";
+    }
+
+    //排序（两个节点之间的交换）
+    @Override
+    public String treeNodeSort(int pid,int sourceId,int targetId) {
+        String table = "platform"+pid;
+        PlatformTree source = sysFunDao.findById(table,sourceId);
+        PlatformTree target = sysFunDao.findById(table,targetId);
+        if(source == null || target == null){
+            return "faile";
+        }
+        sysFunDao.updateWithoutIdAndPid(table,target.getCname(),target.getEname(),target.getNotes(),target.getTag(),sourceId);
+        sysFunDao.updateWithoutIdAndPid(table,source.getCname(),source.getEname(),source.getNotes(),source.getTag(),targetId);
 
         return "success";
     }

@@ -6,6 +6,7 @@ import com.test.Entity.Resdata;
 import com.test.Service.SysFunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.Request;
 
 import java.util.HashMap;
 import java.util.List;
@@ -97,11 +98,19 @@ public class SysFunController {
         return sysFunService.getPlatAuthorized(uid);
     }
 
-    //排序
+    //排序(等待实现节点拖动的排序--暂时不用)
     @RequestMapping(value = "/sortTree", method = RequestMethod.POST)
     public String sortTree(@RequestBody HashMap hashMap) {
         System.out.println(hashMap);
         return sysFunService.sortTree(hashMap);
     }
+
+    //排序（两个节点之间的交换）
+    @RequestMapping(value = "/treeNodeSort",method = RequestMethod.POST)
+    public String treeNodeSort(@RequestParam int pid,@RequestParam int sourceId,@RequestParam int targetId){
+        System.out.println("排序（两个节点之间的交换）");
+        return sysFunService.treeNodeSort(pid,sourceId,targetId);
+    }
+
 
 }

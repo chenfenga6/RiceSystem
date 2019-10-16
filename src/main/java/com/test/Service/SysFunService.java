@@ -27,8 +27,11 @@ public interface SysFunService {
     //删除 某平台的 某节点（包括它的子节点）
     String deleteNode(String pid, String nid);
 
-    //排序
+    //排序(等待实现节点拖动的排序--暂时不用)
     String sortTree(HashMap hashMap);
+
+    //排序（两个节点之间的交换）
+    String treeNodeSort(int pid,int sourceId,int targetId);
 
     /***************************权限测试**********************/
 

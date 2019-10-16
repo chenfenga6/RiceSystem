@@ -47,7 +47,8 @@ public interface SysFunDao {
     int addTreeNode(String table, Integer id, String cName, String eName,
                  Integer pid, String notes, String tag);
 
-
+    @Update("update ${arg0} set cname=#{arg1},ename=#{arg2},notes=#{arg3},tag=#{arg4} where id=#{arg5}")
+    int updateWithoutIdAndPid(String table,String cname,String ename,String notes,String tag,int targetId);
     /*===============================权限测试===================================================*/
     @Insert("insert into permission(rId,nId,pId) values(#{arg0},#{arg1},#{arg2})")
     int addPermission(Integer rid,Integer nid,Integer pid);
