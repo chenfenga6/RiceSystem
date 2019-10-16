@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="../../../css/layui.css">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../../../layui.js"></script>
+    <script src="../../js/url.js"></script>
+</head>
+
+<style>
+    /*.layui-breadcrumb a:hover{*/
+        /*color: #009688!important;*/
+    /*}*/
+
+    .layui-tree-txt{
+        font-size: 17px;
+    }
+    .layui-tree-entry{
+        padding: 10px 0px;
+    }
+</style>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--导航栏-->
+    <div class="layui-header">
+        <div class="layui-logo">稻米生产种植管理系统</div>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <img src="http://t.cn/RCzsdCq" class="layui-nav-img">管理员
+            </li>
+            <li class="layui-nav-item"><a href="../LogLogin/LogLogin.html">退出</a></li>
+        </ul>
+    </div>
+
+    <!--侧边栏-->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item" style="background: #4E5465"><a href="LogPlat.html">平台管理</a></li>
+                <li class="layui-nav-item"><a href="../LogRole/LogRole.html">角色管理</a></li>
+                <li class="layui-nav-item"><a href="../LogUser/LogUser.html">用户管理</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 内容主体区域 -->
+    <div class="layui-body">
+
+        <!--面包屑导航栏-->
+        <div class="layui-breadcrumb" style="padding: 15px 20px 20px 20px; ">
+            <a><cite >模块管理</cite></a>
+            <a><cite class="SystemName"></cite></a>
+            <div style="padding-top:10px;border-bottom: #c0c4cc dashed 1px"></div>
+        </div>
+
+        <div class="layui-row" style="margin-left: 20px">
+            <!--tree left-->
+            <div class="layui-col-md3 " id="module_left">
+                &nbsp
+            </div>
+
+            <!--add tree  right-->
+            <div class=" layui-col-md-offset1 layui-col-md8">
+                <!--按钮-->
+                <div class="layui-row">
+                    <div class="layui-col-md2">
+                        <button type="button" class="layui-btn" id="moduleMessage_id"><i class="layui-icon" >&#xe656;</i>模块信息</button>
+                    </div>
+                    <div class="layui-col-md2 ">
+                        <button type="button" class="layui-btn" id="add_id"><i class="layui-icon" >&#xe608;</i>新增节点</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button type="button" class="layui-btn" id="sort_id" ><i class="layui-icon">&#xe671;</i>节点排序</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button type="button" class="layui-btn" lay-active="desNode" >操作说明</button>
+                    </div>
+                </div>
+                <!--模块信息-->
+                <div class="layui-row" id="module_message" style="padding-top: 25px;">
+                    <p style="font-size: 18px">模块信息</p>
+                    <hr>
+                    <div class="layui-form" lay-filter="moduleMessageForm">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">父节点名称</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="fatherNode" required  lay-verify="required"
+                                       placeholder="父节点名称" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">模块名称(英)</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="nameEnglish" required  lay-verify="required"
+                                       placeholder="请输入模块名称(英)" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">模块名称(中)</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="nameChinese" required lay-verify="required"
+                                       placeholder="请输入模块名称(中)" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Notes</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="Notes" required lay-verify="required"
+                                       placeholder="Notes" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Tag</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="Tag" required lay-verify="required"
+                                       placeholder="Tag" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <!--<div class="layui-form-item" style="margin-top: 30px">-->
+                            <!--<button class="layui-btn" lay-submit lay-filter="formDemo">修改</button>-->
+                        <!--</div>-->
+
+                    </div>
+                </div>
+                <!--添加模块-->
+                <div class="layui-row" id="module_add" style="padding-top: 25px;display: none">
+                    <p style="font-size: 18px">添加节点</p>
+                    <hr>
+                    <div class="layui-form" lay-filter="addNodeform">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">父节点名称</label>
+                            <label class="layui-input-inline" style="width: 300px">
+                                <select id="optionNode" name="fatherNode"  >
+                                    <option value="">请选择一个父节点</option>
+                                </select>
+                            </label>
+                        </div>
+
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">模块名称(英)</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="nameEnglish" required  lay-verify="required"
+                                       placeholder="请输入模块名称(英)" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">模块名称(中)</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="nameChinese" required lay-verify="required"
+                                       placeholder="请输入模块名称(中)" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Notes</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="notes" required lay-verify="required"
+                                       placeholder="Notes" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Tag</label>
+                            <div class="layui-input-inline" style="width: 300px">
+                                <input type="text" name="tag" required lay-verify="required"
+                                       placeholder="Tag" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item" style="margin-top: 30px">
+                            <button class="layui-btn" lay-submit lay-filter="addModule">提交</button>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!--节点交换弹窗-->
+            <div class="layui-row" id="chgTable" style="display: none; padding-top: 20px">
+                <div class="layui-col-md10">
+                    <form class="layui-form" id="addEmployeeForm" lay-filter="sortNode">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">节点1</label>
+                            <label class="layui-input-inline">
+                                <select id="opType1" name="node1"  >
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">节点2</label>
+                            <label class="layui-input-inline">
+                                <select id="opType2" name="node2"  >
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button lay-submit  lay-filter="chgNode" class="layui-btn layui-btn-normal">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../../js/LogPlat/LogPlat_Detail.js" id="js1"></script>
+
+</body>
+
+</html>

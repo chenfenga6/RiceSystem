@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="../../../css/layui.css">
+    <script src="../../../layui.js"></script>
+    <script src="../../js/url.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--导航栏-->
+    <div class="layui-header">
+        <div class="layui-logo">稻米生产种植管理系统</div>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <img src="http://t.cn/RCzsdCq" class="layui-nav-img">管理员
+            </li>
+            <li class="layui-nav-item"><a href="../LogLogin/LogLogin.html">退出</a></li>
+        </ul>
+    </div>
+
+    <!--侧边栏-->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item" ><a href="../LogPlat/LogPlat.html">平台管理</a></li>
+                <li class="layui-nav-item"  style="background: #4E5465"><a href="LogRole.html">角色管理</a></li>
+                <li class="layui-nav-item"><a href="../LogUser/LogUser.html">用户管理</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+
+        <!-- 内容主体区域 -->
+            <div   >
+
+                <div class="layui-col-md" style="margin-left: 30px;" >
+                    <div class="layui-col-md3 "   id="fmenu">
+                        &nbsp
+                    </div>
+                </div>
+
+
+                <div class="layui-tab layui-tab-brief"  style="float:left">
+                    <button class="layui-btn layui-btn-sm " type="button" onclick="getChecked()">提交</button>
+                    <div id = "cmenu"></div>
+                </div>
+            </div>
+
+    </div>
+
+</div>
+<script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/LogRole/LogAuthority.js"></script>
+<script   type="text/javascript">
+
+    function childMenu(mid) {
+        layui.use(['tree', 'jquery', 'layer'], function () {
+            // 操作对象
+            var $ =layui.jquery
+                ,layer = layui.layer;
+
+            var Sys = function () {
+
+            };
+
+            Sys.prototype = {//类继承
+                msgError: function (msg) {
+                    layer.msg(msg, {
+                        icon: 5,
+                        time: 2000
+                    }, function (index) {
+                        layer.close(index);
+                    });
+                },
+                treeShow: function (data) {
+                    layui.tree.render({
+                        elem: '#cmenu',
+                        data: data,
+                        showCheckbox: true,  //是否显示复选框
+                        id: 'treeID',
+                        isJump: true,//是否允许点击节点时弹出新窗口跳转
+                    });
+                }
+            };
+
+            var sys = new Sys();
+            localStorage.setItem("PID", mid);
+            $.ajax({
+                url: BASE_URL + '/permission/findPermByRAndP',
+                type: 'post',
+                data: {
+                    rid: localStorage.getItem("RoleDetail_Id"),
+                    pid: mid,
+                },
+                success: function (res) {
+                    sys.treeShow(res.data);
+                },
+                error: function (res) {
+                    sys.msgError("加载失败！");
+                }
+            });
+        });
+    }
+
+    function getChecked() {
+        layui.use(['tree', 'jquery', 'layer'], function () {
+            var Func = function () {
+            };//类声明
+
+            Func.prototype = {//类继承
+                returnTree: function (checkedData) {
+                    if (checkedData === null) {
+                        return null;
+                    }
+                    console.log(localStorage.getItem("RoleDetail_Id"));
+                    console.log(localStorage.getItem("PID"));
+                    console.log(checkedData);
+                    axios({
+                        url: BASE_URL + '/permission/addPermission',
+                        method: 'POST',
+                        params: {
+                            rid: localStorage.getItem("RoleDetail_Id"),
+                            pid: localStorage.getItem("PID"),
+                        },
+                        data: checkedData,
+                        contentType: "application/json",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then((res) => {
+                        alert("success!");
+                    });
+                    return true;
+
+                }
+            };
+            //全局方法
+            var func = new Func();
+            var checkedData = layui.tree.getChecked('treeID'); //获取选中节点的数据
+            func.returnTree(JSON.stringify(checkedData));
+        });
+    }
+
+
+
+</script>
+</body>
+</html>
